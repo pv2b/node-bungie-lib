@@ -10,6 +10,13 @@
 		"getAvailableThemes":"/User/GetAvailableThemes/",
 		"getMembershipDataById":"/User/GetMembershipsById/{membershipId}/{membershipType}/",
 		"getMembershipDataForCurrentUser":"/User/GetMembershipsForCurrentUser/",
-		"getPartnerships":"/User/{membershipId}/Partnerships/",
+		"getPartnerships":"/User/{membershipId}/Partnerships/"
+	},
+	"Content":{
+		"getContentType":"/Content/GetContentType/{type}/",
+		"getContentById":"/Content/GetContentById/{id}/{locale}/",
+		"getContentByTagAndType":"/Content/GetContentByTagAndType/{tag}/{type}/{locale}/",
+		"searchContentWithText":"/Content/Search/{locale}/",
+		"searchContentByTagAndType":"/Content/SearchContentByTagAndType/{tag}/{type}/{locale}/"
 	}
 }
