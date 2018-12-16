@@ -1,0 +1,15 @@
+{
+	"rootPath": "https://www.bungie.net/Platform",
+	"App":{
+		"getApplicationApiUsage": "/App/ApiUsage/{applicationId}/",
+		"getBungieApplications": "/App/FirstParty/"
+	},
+	"User":{
+		"getBungieNetUserById":"/User/GetBungieNetUserById/{id}/",
+		"searchUsers":"/User/SearchUsers/",
+		"getAvailableThemes":"/User/GetAvailableThemes/",
+		"getMembershipDataById":"/User/GetMembershipsById/{membershipId}/{membershipType}/",
+		"getMembershipDataForCurrentUser":"/User/GetMembershipsForCurrentUser/",
+		"getPartnerships":"/User/{membershipId}/Partnerships/",
+	}
+}

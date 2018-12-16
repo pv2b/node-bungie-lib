@@ -1,0 +1,24 @@
+{
+  "name": "bungie.net-api",
+  "version": "0.0.1",
+  "description": "A zero dependency library for the Bungie.net apis",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@dev.tylermeador.com:1947/ty/bungie.net-api.git"
+  },
+  "keywords": [
+    "bungie",
+    "bungie.net",
+    "destiny",
+    "destiny2",
+    "api",
+    "node.js",
+    "library"
+  ],
+  "author": "Ty Meador",
+  "license": "ISC"
+}
