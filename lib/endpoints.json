@@ -1,22 +1,48 @@
 {
 	"rootPath": "https://www.bungie.net/Platform",
 	"App":{
-		"getApplicationApiUsage": "/App/ApiUsage/{applicationId}/",
-		"getBungieApplications": "/App/FirstParty/"
+		"Get":{
+			"applicationApiUsage": "/App/ApiUsage/{applicationId}/",
+			"bungieApplications": "/App/FirstParty/"
+		}
 	},
 	"User":{
-		"getBungieNetUserById":"/User/GetBungieNetUserById/{id}/",
-		"searchUsers":"/User/SearchUsers/",
-		"getAvailableThemes":"/User/GetAvailableThemes/",
-		"getMembershipDataById":"/User/GetMembershipsById/{membershipId}/{membershipType}/",
-		"getMembershipDataForCurrentUser":"/User/GetMembershipsForCurrentUser/",
-		"getPartnerships":"/User/{membershipId}/Partnerships/"
+		"Get":{
+			"bungieNetUserById":"/User/GetBungieNetUserById/{id}/",
+			"searchUsers":"/User/SearchUsers/",
+			"availableThemes":"/User/GetAvailableThemes/",
+			"membershipDataById":"/User/GetMembershipsById/{membershipId}/{membershipType}/",
+			"membershipDataForCurrentUser":"/User/GetMembershipsForCurrentUser/",
+			"partnerships":"/User/{membershipId}/Partnerships/"
+		}
 	},
 	"Content":{
-		"getContentType":"/Content/GetContentType/{type}/",
-		"getContentById":"/Content/GetContentById/{id}/{locale}/",
-		"getContentByTagAndType":"/Content/GetContentByTagAndType/{tag}/{type}/{locale}/",
-		"searchContentWithText":"/Content/Search/{locale}/",
-		"searchContentByTagAndType":"/Content/SearchContentByTagAndType/{tag}/{type}/{locale}/"
+		"Get":{
+			"contentType":"/Content/GetContentType/{type}/",
+			"contentById":"/Content/GetContentById/{id}/{locale}/",
+			"contentByTagAndType":"/Content/GetContentByTagAndType/{tag}/{type}/{locale}/",
+			"contentWithText":"/Content/Search/{locale}/",
+			"contentByTagAndType":"/Content/SearchContentByTagAndType/{tag}/{type}/{locale}/"
+		}
+	},
+	"Forum":{
+		"Get":{
+			"topicsPaged":"/Forum/GetTopicsPaged/{page}/{pageSize}/{group}/{sort}/{quickDate}/{categoryFilter}/",
+			"coreTopcisPaged":"/Forum/GetCoreTopicsPaged/{page}/{sort}/{quickDate}/{categoryFilter}/",
+			"postsThreadedPaged":"/Forum/GetPostsThreadedPaged/{parentPostId}/{page}/{pageSize}/{replySize}/{getParentPost}/{rootThreadMode}/{sortMode}/",
+			"postsThreadedPagedFromChild":"orum/GetPostsThreadedPagedFromChild/{childPostId}/{page}/{pageSize}/{replySize}/{rootThreadMode}/{sortMode}/",
+			"postAndParent":"/Forum/GetPostAndParent/{childPostId}/",
+			"postAndParentAwaitingApproval":"/Forum/GetPostAndParentAwaitingApproval/{childPostId}/",
+			"topicForContent":"/Forum/GetTopicForContent/{contentId}/",
+			"forumTagSuggestions":"/Forum/GetForumTagSuggestions/",
+			"poll":"/Forum/Poll/{topicId}/"
+		},
+		"Post":{
+			"joinFireteamThread":"/Forum/Recruit/Join/{topicId}/",
+			"leaveFireteamThread":"/Forum/Recruit/Leave/{topicId}/",
+			"kickBanFireteamApplicant":"/Forum/Recruit/KickBan/{topicId}/{targetMembershipId}/",
+			"approveFireteamThread":"/Forum/Recruit/Approve/{topicId}/",
+			"getRecruitmentThreadSummaries":"/Forum/Recruit/Summaries/"
+		}
 	}
 }
