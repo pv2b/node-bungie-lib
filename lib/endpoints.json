@@ -21,7 +21,8 @@
 		"getContentById":"/Content/GetContentById/{id}/{locale}/",
 		"getContentByTagAndType":"/Content/GetContentByTagAndType/{tag}/{type}/{locale}/",
 		"getContentWithText":"/Content/Search/{locale}/",
-		"getContentByTagAndType":"/Content/SearchContentByTagAndType/{tag}/{type}/{locale}/"
+		"getContentByTagAndType":"/Content/SearchContentByTagAndType/{tag}/{type}/{locale}/",
+		"searchContentWithText":"/Content/Search/{locale}/"
 	},
 	
 	"Forum":{
