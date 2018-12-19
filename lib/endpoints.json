@@ -1,5 +1,7 @@
 {
 	"rootPath": "https://www.bungie.net/Platform",
+	"authorization": "https://www.bungie.net/en/oauth/authorize",
+	"token":"https://www.bungie.net/platform/app/oauth/token/",
 	"App":{
 		"getApplicationApiUsage": "/App/ApiUsage/{applicationId}/",
 		"getBungieApplications": "/App/FirstParty/"
