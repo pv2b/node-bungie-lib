@@ -3,14 +3,18 @@
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
 
-class Wrapper{
-	
-	
+/**
+ * Wraps the endpoint micro-libraries to make API management easier. While
+ * the micro-libraries are designed to be modular and can operate fully independent
+ * of this wrapper; I strongly suggest you start by using the wrapper. It's very handy ;)
+ * @class
+ */
+class BNet_Api{
 	/**
-	 * Initializes all modules with a single api project
-	 * @constructor
+	 * Initializes all specified libraries
+	 * @param { Object } ApiAuth - The ApiAuthorization 
 	 */
-	constructor( ApiAuth, modules = "" ){
+	constructor( ApiAuth, modules = ['all'] ){
 		
 		// Sanity check
 		if( typeof ApiAuth.key !== 'string')
@@ -21,7 +25,7 @@ class Wrapper{
 		this.ApiAuth = ApiAuth;
 		
 		// Loads all modules by default
-		if( ! Array.isArray( modules )){
+		if( ! Array.isArray( modules ) || modules[0] == 'all' ){
 			
 			// Read everything in the lib folder
 			Fs.readdirSync( __dirname + '/lib').forEach( file => {
@@ -39,5 +43,4 @@ class Wrapper{
 	}
 }
 
-
-module.exports = Wrapper;
+module.exports = BNet_Api;

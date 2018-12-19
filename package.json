@@ -1,8 +1,8 @@
 {
-  "name": "bungie.net-api",
+  "name": "bungie-net-api",
   "version": "0.0.1",
   "description": "A zero dependency library for the Bungie.net apis",
-  "main": "main.js",
+  "main": "BNet_Api.js",
   "scripts": {
     "test": "node test start"
   },
