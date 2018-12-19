@@ -32,9 +32,13 @@ class BNet_Api{
 				
 				// If it's a js file, create a new instance of it
 				if( Path.extname(file) == '.js'){
+					// Remove file extension
 					let fileName = file.substring(0, file.length - 3);
-					
-					this[ fileName ] = new (require( __dirname + "/lib/" + file))( this.ApiAuth );
+					try{
+						this[ fileName ] = new ( require( __dirname + "/lib/" + file ) )( this.ApiAuth );
+					}catch( e ){
+						throw new Error("It appears that " + file + " is not a valid module. Does it export a class or constructor?");
+					}
 				}
 			});
 		} else {
