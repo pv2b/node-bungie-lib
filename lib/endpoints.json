@@ -37,7 +37,7 @@
 		"kickBanFireteamApplicant":"/Forum/Recruit/KickBan/{topicId}/{targetMembershipId}/",
 		"approveFireteamThread":"/Forum/Recruit/Approve/{topicId}/",
 		"getRecruitmentThreadSummaries":"/Forum/Recruit/Summaries/"
-	,}
+	},
 	
 	"GroupV2":{
 		"getAvailableAvatars":"/GroupV2/GetAvailableAvatars/",
