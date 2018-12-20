@@ -2,18 +2,27 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-const MicroLibLoadError = require( __dirname + "/lib/moduleLib/MicroLibLoadError.js");
-/**
- * Wraps the endpoint micro-libraries to make API management easier. While
- * the micro-libraries are designed to be modular and can operate fully independent
- * of this wrapper; I strongly suggest you start by using the wrapper. It's very handy ;)
- * @class
- */
+const MicroLibLoadError = require( __dirname + "/lib/microLib/MicroLibLoadError.js");
+
 class BNet_Api{
 	/**
-	 * Initializes all specified libraries
+	 * Wraps the endpoint micro-libraries to make API management easier. While
+	 * the micro-libraries are designed to be modular and can operate fully independent
+	 * of this wrapper; I strongly suggest you start by using the wrapper. It's very handy ;)
+	 * @constructor
 	 * @param { ApiAuth } ApiAuth - An Object containing your API credentials
-	 * @param { array } loadModules - An array containing the names of the modules that you want to load
+	 * @param { array } loadMicroLibs - An array containing the names of the micro-libraries that you want to load
+	 * @example
+	 * var ApiAuth = {
+	 *    key : "my_super_secret_api_key",
+	 *    clientId: "my_client_id",
+	 *    userAgent : "MyApp/0.2.3 AppId/MyAppId (+myProjectUrl;mycontact@email.com)"
+	 * }
+	 *
+	 * var BNetApi = require( 'bungie-net-api' );
+	 *
+	 * // Only load the destiny2 and user libraries
+	 * const Api = new BNetApi( ApiAuth, ['destiny2', 'user']);
 	 */
 	constructor( ApiAuth, loadMicroLibs = ['all'] ){
 		
