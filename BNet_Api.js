@@ -51,8 +51,6 @@ class BNet_Api{
 		if( loadMicroLibs[0] == 'all' ){
 			// For each microLib with an entry in modules.json
 			Object.keys( this.microLibs ).forEach( key => {
-				console.log(key);
-				console.log( this.microLibs[key]);
 				// Try to create an instance of the microLib and store it to this.{microLib name}. 
 				try{
 					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiAuth );
