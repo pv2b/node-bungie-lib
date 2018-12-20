@@ -1,0 +1,8 @@
+{
+	"none" : 0,
+	"owner": 1,
+	"teamMember": 2,
+	"0":"none",
+	"1":"owner",
+	"2":"teamMember"
+}

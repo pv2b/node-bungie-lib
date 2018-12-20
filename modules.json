@@ -1,0 +1,20 @@
+[
+	{
+		"name"    : "content",
+		"objName" : "Content",
+		"main"    : "Content.js",
+		"path"    : "/lib/Content/"
+	},
+	{
+		"name"    : "user",
+		"objName" : "User",
+		"main"    : "User.js",
+		"path"    : "/lib/User/"
+	},
+	{
+		"name"    : "forum",
+		"objName" : "Forum",
+		"main"    : "Forum.js",
+		"path"    : "/lib/Forum/"
+	}
+]

@@ -1,0 +1,8 @@
+{
+	"none" : 0,
+	"confidential : 1,
+	"public":2,
+	"0" : "none",
+	"1" : "confidential",
+	"2" : "public"
+}

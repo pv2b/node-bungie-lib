@@ -2,7 +2,7 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-
+const ModuleError = require( __dirname + "/lib/moduleLib/ModuleError.js");
 /**
  * Wraps the endpoint micro-libraries to make API management easier. While
  * the micro-libraries are designed to be modular and can operate fully independent
@@ -13,8 +13,10 @@ class BNet_Api{
 	/**
 	 * Initializes all specified libraries
 	 * @param { Object } ApiAuth - The ApiAuthorization 
+	 *   @property { string } ApiAuth.key - The API key that you were given when you created your project at 
+	 * @param { array } loadModules - An array of modules to load
 	 */
-	constructor( ApiAuth, modules = ['all'] ){
+	constructor( ApiAuth, loadMods = ['all'] ){
 		
 		// Sanity check
 		if( typeof ApiAuth.key !== 'string')
@@ -23,24 +25,29 @@ class BNet_Api{
 			throw new Error( "The clientId '" + ApiAuth.clientId + "' could not be parsed" );
 		
 		this.ApiAuth = ApiAuth;
+		this.modules = JSON.parse ( Fs.readFileSync( __dirname + '/modules.json' ) );
 		
 		// Loads all modules by default
-		if( ! Array.isArray( modules ) || modules[0] == 'all' ){
-			
-			// Read everything in the lib folder
-			Fs.readdirSync( __dirname + '/lib').forEach( file => {
-				
-				// If it's a js file, create a new instance of it
-				if( Path.extname(file) == '.js'){
-					// Remove file extension
-					let fileName = file.substring(0, file.length - 3);
-					try{
-						this[ fileName ] = new ( require( __dirname + "/lib/" + file ) )( this.ApiAuth );
-					}catch( e ){
-						throw new Error("It appears that " + file + " is not a valid module. Does it export a class or constructor?");
-					}
+		if( ! Array.isArray( loadMods ) ) {
+			console.warn( "Warning, loadModules was expected to be an array, got " + typeof loadMods);
+			console.warn( "-=-=-=-=- Loading all modules by default -=-=-=-=-" );
+			loadMods = ['all'];
+		}	
+		
+		// Load all modules
+		if( loadMods[0] == 'all' ){
+			this.modules.forEach( module => {
+				try{
+					this[module.objName] = new( require( __dirname + module.path + module.main ) )( this.ApiAuth );
+				} catch( e ){
+					throw new ModuleError( {
+						message : "The module " + module.name + " failed to load",
+						reason : e,
+						module : module
+					} );
 				}
-			});
+			})
+		// Load only the supplied modules
 		} else {
 			// Implement loading of individual modules later
 		}

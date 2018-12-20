@@ -1,0 +1,12 @@
+{
+	"none" : 0,
+	"private" : 1,
+	"public" : 2,
+	"disabled" : 3,
+	"blocked" : 4,
+	"0" : "none",
+	"1" : "private",
+	"2" : "public",
+	"3" : "disabled",
+	"4" : "blocked"
+}
