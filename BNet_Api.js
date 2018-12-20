@@ -2,7 +2,7 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-const ModuleError = require( __dirname + "/lib/moduleLib/ModuleError.js");
+const MicroLibLoadError = require( __dirname + "/lib/moduleLib/MicroLibLoadError.js");
 /**
  * Wraps the endpoint micro-libraries to make API management easier. While
  * the micro-libraries are designed to be modular and can operate fully independent
@@ -12,11 +12,10 @@ const ModuleError = require( __dirname + "/lib/moduleLib/ModuleError.js");
 class BNet_Api{
 	/**
 	 * Initializes all specified libraries
-	 * @param { Object } ApiAuth - The ApiAuthorization credentials that you were given when you created your project at https://www.bungie.net/en/Application
-	 *   @property { string } ApiAuth.key - The API key that you were given when you created your project at https://www.bungie.net/en/Application
+	 * @param { ApiAuth } ApiAuth - An Object containing your API credentials
 	 * @param { array } loadModules - An array containing the names of the modules that you want to load
 	 */
-	constructor( ApiAuth, loadMods = ['all'] ){
+	constructor( ApiAuth, loadMicroLibs = ['all'] ){
 		
 		// Sanity check
 		if( typeof ApiAuth.key !== 'string')
@@ -25,59 +24,59 @@ class BNet_Api{
 			throw new Error( "The clientId '" + ApiAuth.clientId + "' could not be parsed" );
 		
 		this.ApiAuth = ApiAuth;
-		this.modules = {}
+		this.microLibs = {}
 		
-		// Parse the array of modules
-		JSON.parse ( Fs.readFileSync( __dirname + '/modules.json' ) ).forEach( module => {
-			this.modules[module.name] = module;
+		// Parse the array of micro-libraries
+		JSON.parse ( Fs.readFileSync( __dirname + '/microLibs.json' ) ).forEach( microLib => {
+			this.microLibs[microLib.name] = microLib;
 		});
 		
 		// Loads all modules by default
-		if( ! Array.isArray( loadMods ) ) {
-			console.warn( "Warning, loadModules was expected to be an array, got " + typeof loadMods);
+		if( ! Array.isArray( loadMicroLibs ) ) {
+			console.warn( "Warning, loadModules was expected to be an array, got " + typeof loadMicroLibs);
 			console.warn( "-=-=-=-=- Loading all modules by default -=-=-=-=-" );
-			loadMods = ['all'];
+			loadMicroLibs = ['all'];
 		}	
 		
 		// Load all modules
-		if( loadMods[0] == 'all' ){
-			// For each module with an entry in modules.json
+		if( loadMicroLibs[0] == 'all' ){
+			// For each microLib with an entry in modules.json
 			Object.keys( this.modules ).forEach( key => {
-				// Try to create an instance of the module and store it to this.{module name}. 
+				// Try to create an instance of the microLib and store it to this.{microLib name}. 
 				try{
 					this[this.modules[key].wrapperKey] = new( require( __dirname + this.modules[key].path + this.modules[key].main ) )( this.ApiAuth );
 				} catch( e ){
-					throw new ModuleError( {
-						message : "The module " + this.modules[key].name + " failed to load",
+					throw new MicroLibLoadError( {
+						message : "The microLib " + this.modules[key].name + " failed to load",
 						reason : e,
-						module : this.modules[key]
+						microLib : this.modules[key]
 					} );
 				}
 			})
 		// Load only the supplied modules
 		} else {
-			loadMods.forEach( moduleName => {
-				// Is there an entry for this module in modules.json?
-				if( typeof this.modules[moduleName] !== 'object'){
+			loadMicroLibs.forEach( microLibName => {
+				// Is there an entry for this microLib in microLibs.json?
+				if( typeof this.microLibs[microLibName] !== 'object'){
 					// Nope!, throw an error
-					throw new ModuleError({
-						message: "The module " + moduleName + " failed to load",
-						reason: "The module " + moduleName + " does not have an entry in modules.json"
+					throw new MicroLibLoadError({
+						message: "The micro-library " + microLibName + " failed to load",
+						reason: "The micro-library " + microLibName + " does not have an entry in modules.json"
 					});
 				// Yep! try to load it
 				} else {
-					// cache the module in question
-					let mod = this.modules[moduleName];
+					// cache the micro-library in question
+					let microLib = this.microLibs[microLibName];
 					
-					// Try to create a new instance of the module
+					// Try to create a new instance of the microLib
 					try{
-						this[mod.wrapperKey] = new( require( __dirname + mod.path + mod.main ) )( this.ApiAuth );
+						this[microLib.wrapperKey] = new( require( __dirname + microLib.path + microLib.main ) )( this.ApiAuth );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
-						throw new ModuleError({
-							message: "The module " + moduleName + " failed to load",
+						throw new MicroLibLoadError({
+							message: "The micro-library " + microLibName + " failed to load",
 							reason : e,
-							module: this.modules[moduleName]
+							microLib: this.microLibs[microLibName]
 						});
 					}
 				}

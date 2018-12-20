@@ -85,7 +85,7 @@
 		"contentComment" : 128,
 		"bungieOfficial" : 256,
 		"ninjaOfficial" : 512,
-		"recruitment" : 1024
+		"recruitment" : 1024,
 		"0" : "none",
 		"1" : "textOnly",
 		"2" : "media",
