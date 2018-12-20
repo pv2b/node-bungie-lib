@@ -14,7 +14,7 @@ class BNet_Api{
 	 * Initializes all specified libraries
 	 * @param { Object } ApiAuth - The ApiAuthorization credentials that you were given when you created your project at https://www.bungie.net/en/Application
 	 *   @property { string } ApiAuth.key - The API key that you were given when you created your project at https://www.bungie.net/en/Application
-	 * @param { array } loadModules - An array of modules to load
+	 * @param { array } loadModules - An array containing the names of the modules that you want to load
 	 */
 	constructor( ApiAuth, loadMods = ['all'] ){
 		
@@ -68,9 +68,10 @@ class BNet_Api{
 				} else {
 					// cache the module in question
 					let mod = this.modules[moduleName];
+					
 					// Try to create a new instance of the module
 					try{
-						this[module.wrapperKey] = new( require( __dirname + mod.path + mod.main ) )( this.ApiAuth );
+						this[mod.wrapperKey] = new( require( __dirname + mod.path + mod.main ) )( this.ApiAuth );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
 						throw new ModuleError({
