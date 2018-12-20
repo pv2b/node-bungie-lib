@@ -1,19 +1,19 @@
 [
 	{
 		"name"    : "content",
-		"objName" : "Content",
+		"wrapperKey" : "Content",
 		"main"    : "Content.js",
 		"path"    : "/lib/Content/"
 	},
 	{
 		"name"    : "user",
-		"objName" : "User",
+		"wrapperKey" : "User",
 		"main"    : "User.js",
 		"path"    : "/lib/User/"
 	},
 	{
 		"name"    : "forum",
-		"objName" : "Forum",
+		"wrapperKey" : "Forum",
 		"main"    : "Forum.js",
 		"path"    : "/lib/Forum/"
 	}
