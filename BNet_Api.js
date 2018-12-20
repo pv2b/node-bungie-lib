@@ -47,22 +47,24 @@ class BNet_Api{
 			loadMicroLibs = ['all'];
 		}	
 		
-		// Load all modules
+		// Load all micro-libraries
 		if( loadMicroLibs[0] == 'all' ){
 			// For each microLib with an entry in modules.json
-			Object.keys( this.modules ).forEach( key => {
+			Object.keys( this.microLibs ).forEach( key => {
+				console.log(key);
+				console.log( this.microLibs[key]);
 				// Try to create an instance of the microLib and store it to this.{microLib name}. 
 				try{
-					this[this.modules[key].wrapperKey] = new( require( __dirname + this.modules[key].path + this.modules[key].main ) )( this.ApiAuth );
+					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiAuth );
 				} catch( e ){
 					throw new MicroLibLoadError( {
-						message : "The microLib " + this.modules[key].name + " failed to load",
+						message : "The microLib " + this.microLibs[key].name + " failed to load",
 						reason : e,
-						microLib : this.modules[key]
+						microLib : this.microLibs[key]
 					} );
 				}
 			})
-		// Load only the supplied modules
+		// Load only the preferred micro-libraries
 		} else {
 			loadMicroLibs.forEach( microLibName => {
 				// Is there an entry for this microLib in microLibs.json?

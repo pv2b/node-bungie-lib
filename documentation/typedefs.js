@@ -16,7 +16,7 @@
  */
   
 /**
- * @typedef { function } callback - A function that will be called when a given API call is complete
+ * @typedef { function } apiCallback - A function that will be called when a given API call is complete
  *   @param { ApiResult | false } Response - If the API call was successful, Response will be the parsed Bungie.net API response. If the API call failed, Response will be boolean false
  *   @param { Error | false } err - If the API call was successful, err will be boolean false. If the API call failed, Err will be an instance of the standard Error object
  */
