@@ -2,7 +2,7 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-const MicroLibLoadError = require( __dirname + "/lib/microLib/MicroLibLoadError.js");
+const MicroLib = require( __dirname + "/lib/microLib/main.js");
 
 class BNet_Api{
 	/**
@@ -32,6 +32,9 @@ class BNet_Api{
 		if( ! parseInt( ApiAuth.clientId ) )
 			throw new Error( "The clientId '" + ApiAuth.clientId + "' could not be parsed" );
 		
+		if( typeof ApiAuth.userAgent !== 'string')
+			ApiAuth.userAgent = MicroLib.defaultUserAgent();
+		
 		this.ApiAuth = ApiAuth;
 		this.microLibs = {}
 		
@@ -55,7 +58,7 @@ class BNet_Api{
 				try{
 					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiAuth );
 				} catch( e ){
-					throw new MicroLibLoadError( {
+					throw new MicroLib.MicroLibLoadError( {
 						message : "The microLib " + this.microLibs[key].name + " failed to load",
 						reason : e,
 						microLib : this.microLibs[key]
@@ -68,7 +71,7 @@ class BNet_Api{
 				// Is there an entry for this microLib in microLibs.json?
 				if( typeof this.microLibs[microLibName] !== 'object'){
 					// Nope!, throw an error
-					throw new MicroLibLoadError({
+					throw new MicroLib.MicroLibLoadError({
 						message: "The micro-library " + microLibName + " failed to load",
 						reason: "The micro-library " + microLibName + " does not have an entry in modules.json"
 					});
@@ -82,7 +85,7 @@ class BNet_Api{
 						this[microLib.wrapperKey] = new( require( __dirname + microLib.path + microLib.main ) )( this.ApiAuth );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
-						throw new MicroLibLoadError({
+						throw new MicroLib.MicroLibLoadError({
 							message: "The micro-library " + microLibName + " failed to load",
 							reason : e,
 							microLib: this.microLibs[microLibName]
