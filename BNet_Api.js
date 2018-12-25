@@ -2,7 +2,7 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-const MicroLib = require( __dirname + "/lib/microLib/main.js");
+const MicroLib = require( __dirname + "/lib/microLib/main.js" );
 
 class BNet_Api{
 	/**
@@ -22,39 +22,39 @@ class BNet_Api{
 	 * var BNetApi = require( 'bungie-net-api' );
 	 *
 	 * // Only load the destiny2 and user libraries
-	 * const Api = new BNetApi( ApiAuth, ['destiny2', 'user']);
+	 * const Api = new BNetApi( ApiAuth, ['destiny2', 'user'] );
 	 */
 	constructor( ApiAuth, loadMicroLibs = ['all'] ){
-		
+
 		// Sanity check
 		if( typeof ApiAuth.key !== 'string')
-			throw new Error( "your key '" + ApiAuth.key + "' appears to be invalid. Is it a string?" );
+			throw new TypeError( { varName: 'ApiAuth.key', variable: ApiAuth.key, expected: 'string' } );
 		if( ! parseInt( ApiAuth.clientId ) )
-			throw new Error( "The clientId '" + ApiAuth.clientId + "' could not be parsed" );
-		
+			throw new TypeError( { varName: 'ApiAuth.clientId', variable: ApiAuth.clientId, expected: 'string' } );
+
 		if( typeof ApiAuth.userAgent !== 'string')
 			ApiAuth.userAgent = MicroLib.defaultUserAgent();
-		
+
 		this.ApiAuth = ApiAuth;
 		this.microLibs = {}
-		
+
 		// Parse the array of micro-libraries
 		JSON.parse ( Fs.readFileSync( __dirname + '/microLibs.json' ) ).forEach( microLib => {
 			this.microLibs[microLib.name] = microLib;
 		});
-		
+
 		// Loads all modules by default
 		if( ! Array.isArray( loadMicroLibs ) ) {
-			console.warn( "Warning, loadModules was expected to be an array, got " + typeof loadMicroLibs);
+			console.warn( "Warning, loadModules was expected to be an array, got " + typeof loadMicroLibs );
 			console.warn( "-=-=-=-=- Loading all modules by default -=-=-=-=-" );
 			loadMicroLibs = ['all'];
-		}	
-		
+		}
+
 		// Load all micro-libraries
 		if( loadMicroLibs[0] == 'all' ){
 			// For each microLib with an entry in modules.json
 			Object.keys( this.microLibs ).forEach( key => {
-				// Try to create an instance of the microLib and store it to this.{microLib name}. 
+				// Try to create an instance of the microLib and store it to this.{microLib name}.
 				try{
 					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiAuth );
 				} catch( e ){
@@ -64,12 +64,12 @@ class BNet_Api{
 						microLib : this.microLibs[key]
 					} );
 				}
-			})
+			} )
 		// Load only the preferred micro-libraries
 		} else {
 			loadMicroLibs.forEach( microLibName => {
 				// Is there an entry for this microLib in microLibs.json?
-				if( typeof this.microLibs[microLibName] !== 'object'){
+				if( typeof this.microLibs[microLibName] !== 'object' ){
 					// Nope!, throw an error
 					throw new MicroLib.MicroLibLoadError({
 						message: "The micro-library " + microLibName + " failed to load",
@@ -79,7 +79,7 @@ class BNet_Api{
 				} else {
 					// cache the micro-library in question
 					let microLib = this.microLibs[microLibName];
-					
+
 					// Try to create a new instance of the microLib
 					try{
 						this[microLib.wrapperKey] = new( require( __dirname + microLib.path + microLib.main ) )( this.ApiAuth );
