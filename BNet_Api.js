@@ -10,10 +10,10 @@ class BNet_Api{
 	 * the micro-libraries are designed to be modular and can operate fully independent
 	 * of this wrapper; I strongly suggest you start by using the wrapper. It's very handy ;)
 	 * @constructor
-	 * @param { ApiAuth } ApiAuth - An Object containing your API credentials
+	 * @param { ApiCreds } ApiCreds - An Object containing your API credentials
 	 * @param { array } loadMicroLibs - An array containing the names of the micro-libraries that you want to load
 	 * @example
-	 * var ApiAuth = {
+	 * var ApiCreds = {
 	 *    key : "my_super_secret_api_key",
 	 *    clientId: "my_client_id",
 	 *    userAgent : "MyApp/0.2.3 AppId/MyAppId (+myProjectUrl;mycontact@email.com)"
@@ -22,20 +22,20 @@ class BNet_Api{
 	 * var BNetApi = require( 'bungie-net-api' );
 	 *
 	 * // Only load the destiny2 and user libraries
-	 * const Api = new BNetApi( ApiAuth, ['destiny2', 'user'] );
+	 * const Api = new BNetApi( ApiCreds, ['destiny2', 'user'] );
 	 */
-	constructor( ApiAuth, loadMicroLibs = ['all'] ){
+	constructor( ApiCreds, loadMicroLibs = ['all'] ){
 
 		// Sanity check
-		if( typeof ApiAuth.key !== 'string')
-			throw new TypeError( { varName: 'ApiAuth.key', variable: ApiAuth.key, expected: 'string' } );
-		if( ! parseInt( ApiAuth.clientId ) )
-			throw new TypeError( { varName: 'ApiAuth.clientId', variable: ApiAuth.clientId, expected: 'string' } );
+		if( typeof ApiCreds.key !== 'string')
+			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
+		if( ! parseInt( ApiCreds.clientId ) )
+			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'string' } );
 
-		if( typeof ApiAuth.userAgent !== 'string')
-			ApiAuth.userAgent = MicroLib.defaultUserAgent();
+		if( typeof ApiCreds.userAgent !== 'string')
+			ApiCreds.userAgent = MicroLib.defaultUserAgent();
 
-		this.ApiAuth = ApiAuth;
+		this.ApiCreds = ApiCreds;
 		this.microLibs = {}
 
 		// Parse the array of micro-libraries
@@ -56,7 +56,7 @@ class BNet_Api{
 			Object.keys( this.microLibs ).forEach( key => {
 				// Try to create an instance of the microLib and store it to this.{microLib name}.
 				try{
-					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiAuth );
+					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiCreds );
 				} catch( e ){
 					throw new MicroLib.MicroLibLoadError( {
 						message : "The microLib " + this.microLibs[key].name + " failed to load",
@@ -82,7 +82,7 @@ class BNet_Api{
 
 					// Try to create a new instance of the microLib
 					try{
-						this[microLib.wrapperKey] = new( require( __dirname + microLib.path + microLib.main ) )( this.ApiAuth );
+						this[microLib.wrapperKey] = new( require( __dirname + microLib.path + microLib.main ) )( this.ApiCreds );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
 						throw new MicroLib.MicroLibLoadError({
@@ -94,6 +94,7 @@ class BNet_Api{
 				}
 			} );
 		}
+		this.authUri = this.OAuth.authUri;
 	}
 }
 
