@@ -16,5 +16,11 @@
 		"wrapperKey" : "Forum",
 		"main"    : "Forum.js",
 		"path"    : "/lib/Forum/"
+	},
+	{
+		"name" : "oAuth",
+		"wrapperKey" : "OAuth",
+		"main" : "OAuth.js",
+		"path" : "/lib/oAuth/"
 	}
 ]
