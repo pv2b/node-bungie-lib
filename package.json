@@ -20,5 +20,8 @@
     "library"
   ],
   "author": "Ty Meador",
-  "license": ""
+  "license": "",
+  "dependencies": {
+    "memcached": "^2.2.2"
+  }
 }
