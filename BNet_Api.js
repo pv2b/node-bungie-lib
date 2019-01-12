@@ -54,9 +54,10 @@ class BNet_Api{
 		if( loadMicroLibs[0] == 'all' ){
 			// For each microLib with an entry in modules.json
 			Object.keys( this.microLibs ).forEach( key => {
-				// Try to create an instance of the microLib and store it to this.{microLib name}.
+				let ml = this.microLibs[key];
+				// Try to create an instance of the microLib and store it to this[microLib_name]
 				try{
-					this[this.microLibs[key].wrapperKey] = new( require( __dirname + this.microLibs[key].path + this.microLibs[key].main ) )( this.ApiCreds );
+					this[ml.wrapperKey] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 				} catch( e ){
 					throw new MicroLib.MicroLibLoadError( {
 						message : "The microLib " + this.microLibs[key].name + " failed to load",
@@ -78,11 +79,11 @@ class BNet_Api{
 				// Yep! try to load it
 				} else {
 					// cache the micro-library in question
-					let microLib = this.microLibs[microLibName];
+					let ml = this.microLibs[microLibName];
 
 					// Try to create a new instance of the microLib
 					try{
-						this[microLib.wrapperKey] = new( require( __dirname + microLib.path + microLib.main ) )( this.ApiCreds );
+						this[ml.wrapperKey] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
 						throw new MicroLib.MicroLibLoadError({

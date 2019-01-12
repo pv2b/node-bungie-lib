@@ -14,10 +14,14 @@
  *   @property { string } wrapperKey - The key that the new instance of the micro-library will be assigned to
  *   @property { string } main - The name of the main file for the micro-library
  *   @property { string } path - The path to the root of the micro-library
- */
-  
+ */ 
+ 
 /**
- * @typedef { function } apiCallback - A function that will be called when a given API call is complete
- *   @param { ApiResult | false } Response - If the API call was successful, Response will be the parsed Bungie.net API response. If the API call failed, Response will be boolean false
- *   @param { Error | false } err - If the API call was successful, err will be boolean false. If the API call failed, Err will be an instance of the standard Error object
+ * @typedef { Object } oAuth - An object containing your oAuth access secrets. see {@link module:OAuth~OAuth OAuth.requestAccessToken} for more information
+ *   @property { string } access_token - Used to make oAuth protected requests
+ *   @porperty { string } token_type - 
+ *   @property { int } expires_in - Number of seconds until the access_token expires_in
+ *   @property { string } refresh_token - Used to request a new access_token without user interaction
+ *   @property { int } refresh_expires_in - Number of minutes until the refresh_token expires and the user has to actively authenticate the application again
+ *   @property { number-like } membership_id - The membership ID of the user that authorized the application
  */
