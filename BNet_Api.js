@@ -2,7 +2,7 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-const MicroLib = require( __dirname + "/lib/microLib/main.js" );
+const MicroLib = require( __dirname + "/lib/MicroLibrary.js" );
 
 class BNet_Api{
 	/**
