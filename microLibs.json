@@ -28,5 +28,12 @@
 		"wrapperKey" : "GroupV2",
 		"main" : "GroupV2.js",
 		"path" : "/lib/GroupV2/"
+	},
+	{
+		"name" : "destiny2",
+		"wrapperKey" : "Destiny2",
+		"main" : "Destiny2.js",
+		"path" : "/lib/Destiny2/"
 	}
+	
 ]
