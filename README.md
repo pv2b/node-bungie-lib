@@ -59,7 +59,7 @@ This means that you can make as many API calls as you want simultaneously.
     Api.User.searchUsers( 'JackSparrow' ),
     Api.User.getAvailableThemes(),
     Api.Destiny2.searchPlayer( "JackSparrow", "TIGERPSN" ),
-    Api.Trending.getTrendingCategory
+    Api.Trending.getTrendingCategory()
   ];
   
   // Once all of those API calls have finished, do work
