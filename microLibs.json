@@ -40,6 +40,12 @@
 		"wrapperKey" : "CC",
 		"main" : "CommunityContent.js",
 		"path" : "/lib/CommunityContent/"
+	},
+	{
+		"name" : "trending",
+		"wrapperKey" : "Trending",
+		"main" : "Trending.js",
+		"path" : "/lib/Trending/"
 	}
 	
 ]
