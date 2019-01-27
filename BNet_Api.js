@@ -3,6 +3,7 @@
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
 const MicroLib = require( __dirname + "/lib/MicroLibrary.js" );
+var Request = null;
 
 class BNet_Api{
 	/**
@@ -25,7 +26,9 @@ class BNet_Api{
 	 * const Api = new BNetApi( ApiCreds, ['destiny2', 'user'] );
 	 */
 	constructor( ApiCreds, loadMicroLibs = ['all'] ){
-
+		
+		Request = Ml.Request( ApiCreds );
+		
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
 			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
@@ -96,6 +99,31 @@ class BNet_Api{
 			} );
 		}
 		this.authUri = this.OAuth.authUri;
+	}
+	
+	/**
+	 * List of available localization cultures
+	 * @returns { Promise }
+	 */
+	getAvailableLocales(){
+		return Request.get( "https://www.bungie.net/Platform/GetAvailableLocales/" );
+	}
+	
+	/**
+	 * Get the common settings used by the Bungie.Net environment.
+	 * @returns { Promise }
+	 */
+	getCommonSettings(){
+		return Request.get( "https://www.bungie.net/Platform/Settings/" );
+	}
+	
+	/**
+	 * Gets any active global alert for display in the forum banners, help pages, etc. Usually used for DOC alerts.
+	 * @param { boolean } [includeStreaming=true] - Determines whether Streaming Alerts are included in results
+	 */
+	getGlobalAlerts( includestreaming = true ){
+		return Ml.renderEndpoint( '/GlobalAlerts/', {}, { includestreaming } )
+			.then( endpoint => Request.get( "https://www.bungie.net/Platform" + endpoint ) );
 	}
 }
 

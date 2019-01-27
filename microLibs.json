@@ -46,6 +46,11 @@
 		"wrapperKey" : "Trending",
 		"main" : "Trending.js",
 		"path" : "/lib/Trending/"
+	},
+	{
+		"name" : "fireteam",
+		"wrapperKey" : "Fireteam",
+		"main" : "Fireteam.js",
+		"path" : "/lib/Fireteam/"
 	}
-	
 ]
