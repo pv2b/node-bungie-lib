@@ -34,6 +34,12 @@
 		"wrapperKey" : "Destiny2",
 		"main" : "Destiny2.js",
 		"path" : "/lib/Destiny2/"
+	},
+	{
+		"name" : "communityContent",
+		"wrapperKey" : "CC",
+		"main" : "CommunityContent.js",
+		"path" : "/lib/CommunityContent/"
 	}
 	
 ]
