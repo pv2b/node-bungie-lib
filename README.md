@@ -4,7 +4,11 @@ This library aims to be the fastest, lightest-weight JavaScript implementation o
 1. Fully Asynchronous 
 1. Well Documented
 
-# Setup
+# HELP NEEDED
+All of the library is written and just needs to be tested. Please look through the issues list and consider testing a few APICalls for me. Leave a comment on that issue with the outcome
+so that I know which calls I can make as good, and which calls I need to fix.
+
+## Setup
 1. First create a project at `https://www.bungie.net/en/Application`
 2. Make sure that your OAuth client type is "Confidential" if you need to make oAuth calls
 3. Install this library `npm install bungie-lib`
@@ -44,7 +48,7 @@ to interact with their account
 and your accessCode will be a querystring parameter. Grab it associate it with this client somehow (I use a session store). You'll need this
 code if you want to make privileged API requests
 
-# Fully Asynchronous
+## Fully Asynchronous
 The library makes extensive use of native ES6 promises. Any non-trivial work load is exectued asynchonously making the library extrememly
 scalable. All API call return an [ES6 Promise](http://es6-features.org/#PromiseUsage) that resolves with the parsed Bungie.net API response.
 ```javascript
@@ -68,7 +72,7 @@ This means that you can make as many API calls as you want simultaneously.
   } );
 ```
 
-# Api Call Chaining
+## Api Call Chaining
 The Flexibility of promises allows us to take multiple API calls and chain them one after the other. FOr instance, lets request an oAuth
 access token and then immediately refresh that token. (You would never do this in real life, but it's a good example of an instance when
 we need one promise to wait on another promise)
@@ -80,14 +84,14 @@ we need one promise to wait on another promise)
   } );
 ```
 
-# Requesting an oAuth token
+## Requesting an oAuth token
 ```javascript
   Api.OAuth.requestAccessToken( ApiCreds.authCode ).then( oAuth => {
     // Save your oAuth tokens. A session store is recommended
   } );
 ```
 
-# Refreshing an oAuth token
+## Refreshing an oAuth token
 ```javascript
   Api.OAuth.refrshAccessToken( oAuth ).then( oAUth => {
     // Save your oAuth tokens. A session store is recommended
