@@ -77,11 +77,11 @@ The Flexibility of promises allows us to take multiple API calls and chain them 
 access token and then immediately refresh that token. (You would never do this in real life, but it's a good example of an instance when
 we need one promise to wait on another promise)
 ```javascript
-  Api.OAuth.requestAccessToken( ApiCreds ).then( accessToken => {
-    Api.OAuth.refreshAccessToken( accessToken ).then( newAccessToken => {
-      // The token will not be renewed until the request has successfully completed
-    } )
-  } );
+  Api.OAuth.requestAccessToken( ApiCreds )
+	.then( accessToken => Api.OAuth.refreshAccessToken( accessToken) )
+    .then( newToken => {
+		// Store our latest token somehow
+	}) ;
 ```
 
 ## Requesting an oAuth token
