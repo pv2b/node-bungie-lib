@@ -79,7 +79,7 @@ we need one promise to wait on another promise)
 ```javascript
   Api.OAuth.requestAccessToken( ApiCreds )
 	.then( accessToken => Api.OAuth.refreshAccessToken( accessToken) )
-    .then( newToken => {
+	.then( newToken => {
 		// Store our latest token somehow
 	}) ;
 ```
