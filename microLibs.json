@@ -18,12 +18,6 @@
 		"path"    : "/lib/Forum/"
 	},
 	{
-		"name" : "oAuth",
-		"wrapperKey" : "OAuth",
-		"main" : "OAuth.js",
-		"path" : "/lib/oAuth/"
-	},
-	{
 		"name" : "groupV2",
 		"wrapperKey" : "GroupV2",
 		"main" : "GroupV2.js",

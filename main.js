@@ -2,8 +2,10 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
+const QueryString = require( 'querystring' );
 const Ml = require( __dirname + "/lib/MicroLibrary.js" );
 var Request = null;
+const debug = require( 'debug' )( 'BungieLib' );
 
 class BungieLib{
 	/**
@@ -98,7 +100,8 @@ class BungieLib{
 				}
 			} );
 		}
-		this.authUri = this.OAuth.authUri;
+		this.Endpoints = require( __dirname + "/Endpoints.js" );
+		this.authUri = this.Endpoints.authorization + "?response_type=code&client_id=" + this.ApiCreds.clientId;
 	}
 	
 	/**
@@ -106,7 +109,7 @@ class BungieLib{
 	 * @returns { Promise }
 	 */
 	getAvailableLocales(){
-		return Request.get( "https://www.bungie.net/Platform/GetAvailableLocales/" );
+		return Request.get( this.Endpoints.rootPath = this.Endpoints.getAvailableLocales );
 	}
 	
 	/**
@@ -114,7 +117,7 @@ class BungieLib{
 	 * @returns { Promise }
 	 */
 	getCommonSettings(){
-		return Request.get( "https://www.bungie.net/Platform/Settings/" );
+		return Request.get( this.Endpoints.rootPath + this.Endpoints.getCommonSettings );
 	}
 	
 	/**
@@ -123,7 +126,52 @@ class BungieLib{
 	 */
 	getGlobalAlerts( includestreaming = true ){
 		return Ml.renderEndpoint( '/GlobalAlerts/', {}, { includestreaming } )
-			.then( endpoint => Request.get( "https://www.bungie.net/Platform" + endpoint ) );
+			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
+	}
+	
+	/**
+	 * Uses an oAuthCode to request a oAuthToken
+	 * @param { string } authCode - The oAuthCode that was given to your client after they authorized your application
+	 * @example
+	 * OAuth.requestAccessToken( Opts ).then( auth => {
+	 *     console.log( auth ); // Do something with the api response
+	 * }).catch( e => {
+	 *    // Error handling
+	 * });
+	 */
+	async requestAccessToken( authCode = "NO_CODE_PROVIDED" ){
+		debug( 'Requesting access token with authCode : ' + authCode );
+		return Request.post( 
+			this.Endpoints.rootPath + this.Endpoints.token,
+			QueryString.stringify( {
+				grant_type : "authorization_code",
+				code : "" + authCode,
+				clientId : this.ApiCreds.clientId
+			} )
+		);
+	}
+	
+	/**
+	 * Refreshes an oAuth token
+	 * @param { string } refreshToken - The refresh token you were given with your access token
+	 * @example
+	 * OAuth.refreshAccessToken( Opts ).then( auth => {
+	 *     console.log( auth ); // Do something with the api response
+	 * }).catch( e => {
+	 *    // Error handling
+	 * });	 
+	 */
+	async refreshAccessToken( oAuth ){	
+		// They can pass the entire bungie.net oAuth object, or just the refreshToken
+		let refreshToken = ( typeof oAuth === 'object' ) ? oAuth.refresh_token : oAuth;
+	
+		return Request.post( 
+			this.Endpoints.rootPath + this.Endpoints.refresh,
+			QueryString.stringify( {
+				grant_type : "refresh_token",
+				refresh_token : "" + refreshToken
+			} )
+		 );
 	}
 }
 
