@@ -1,14 +1,14 @@
 {
-  "name": "bungie-net-api",
+  "name": "node-bungie-lib",
   "version": "0.0.9",
-  "description": "A zero dependency library for the Bungie.net apis",
-  "main": "BNet_Api.js",
+  "description": "A zero dependency library for the Bungie.net api",
+  "main": "main.js",
   "scripts": {
     "test": "node test start"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@dev.tylermeador.com:1947/ty/bungie.net-api.git"
+    "url": "https://github.com/Native-Coder/node-bungie-lib"
   },
   "keywords": [
     "bungie",

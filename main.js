@@ -2,7 +2,7 @@
 
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
-const MicroLib = require( __dirname + "/lib/MicroLibrary.js" );
+const Ml = require( __dirname + "/lib/MicroLibrary.js" );
 var Request = null;
 
 class BNet_Api{
@@ -27,7 +27,7 @@ class BNet_Api{
 	 */
 	constructor( ApiCreds, loadMicroLibs = ['all'] ){
 		
-		Request = Ml.Request( ApiCreds );
+		Request = new Ml.Request( ApiCreds );
 		
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
@@ -36,14 +36,14 @@ class BNet_Api{
 			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'string' } );
 
 		if( typeof ApiCreds.userAgent !== 'string')
-			ApiCreds.userAgent = MicroLib.defaultUserAgent();
+			ApiCreds.userAgent = Ml.defaultUserAgent();
 
 		this.ApiCreds = ApiCreds;
-		this.microLibs = {}
+		this.MicroLibs = {}
 
 		// Parse the array of micro-libraries
-		JSON.parse ( Fs.readFileSync( __dirname + '/microLibs.json' ) ).forEach( microLib => {
-			this.microLibs[microLib.name] = microLib;
+		JSON.parse ( Fs.readFileSync( __dirname + '/microLibs.json' ) ).forEach( MicroLib => {
+			this.MicroLibs[ MicroLib.name ] = MicroLib;
 		});
 
 		// Loads all modules by default
@@ -55,44 +55,44 @@ class BNet_Api{
 
 		// Load all micro-libraries
 		if( loadMicroLibs[0] == 'all' ){
-			// For each microLib with an entry in modules.json
-			Object.keys( this.microLibs ).forEach( key => {
-				let ml = this.microLibs[key];
-				// Try to create an instance of the microLib and store it to this[microLib_name]
+			// For each Ml with an entry in modules.json
+			Object.keys( this.MicroLibs ).forEach( key => {
+				let ml = this.MicroLibs[ key ];
+				// Try to create an instance of the Ml and store it to this[Ml_name]
 				try{
-					this[ml.wrapperKey] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
+					this[ ml.wrapperKey ] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 				} catch( e ){
-					throw new MicroLib.MicroLibLoadError( {
-						message : "The microLib " + this.microLibs[key].name + " failed to load",
+					throw new Ml.MicroLibLoadError( {
+						message : "The Micro-library " + this.MicroLibs[ key ].name + " failed to load",
 						reason : e,
-						microLib : this.microLibs[key]
+						MicroLib : this.MicroLibs[ key ]
 					} );
 				}
 			} )
 		// Load only the preferred micro-libraries
 		} else {
-			loadMicroLibs.forEach( microLibName => {
-				// Is there an entry for this microLib in microLibs.json?
-				if( typeof this.microLibs[microLibName] !== 'object' ){
+			loadMicroLibs.forEach( mlName => {
+				// Is there an entry for this Ml in Mls.json?
+				if( typeof this.MicroLibs[ mlName ] !== 'object' ){
 					// Nope!, throw an error
-					throw new MicroLib.MicroLibLoadError({
-						message: "The micro-library " + microLibName + " failed to load",
-						reason: "The micro-library " + microLibName + " does not have an entry in modules.json"
+					throw new Ml.MlLoadError({
+						message: "The micro-library " + mlName + " failed to load",
+						reason: "The micro-library " + mlName + " does not have an entry in modules.json"
 					});
 				// Yep! try to load it
 				} else {
 					// cache the micro-library in question
-					let ml = this.microLibs[microLibName];
+					let ml = this.MicroLibs[MlName];
 
-					// Try to create a new instance of the microLib
+					// Try to create a new instance of the Ml
 					try{
 						this[ml.wrapperKey] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
-						throw new MicroLib.MicroLibLoadError({
-							message: "The micro-library " + microLibName + " failed to load",
+						throw new Ml.MicroLibLoadError({
+							message: "The micro-library " + mlname + " failed to load",
 							reason : e,
-							microLib: this.microLibs[microLibName]
+							MicroLib: this.MicroLibs[ mlName ]
 						});
 					}
 				}
