@@ -5,7 +5,7 @@ const Path = require( 'path' );
 const Ml = require( __dirname + "/lib/MicroLibrary.js" );
 var Request = null;
 
-class BNet_Api{
+class BungieLib{
 	/**
 	 * Wraps the endpoint micro-libraries to make API management easier. While
 	 * the micro-libraries are designed to be modular and can operate fully independent
@@ -127,4 +127,4 @@ class BNet_Api{
 	}
 }
 
-module.exports = BNet_Api;
+module.exports = BungieLib;
