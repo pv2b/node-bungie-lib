@@ -15,6 +15,7 @@ class BungieLib{
 	 * @constructor
 	 * @param { ApiCreds } ApiCreds - An Object containing your API credentials
 	 * @param { array } loadMicroLibs - An array containing the names of the micro-libraries that you want to load
+	 * @returns { Promise }
 	 * @example
 	 * var ApiCreds = {
 	 *    key : "my_super_secret_api_key",
@@ -34,7 +35,7 @@ class BungieLib{
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
 			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
-		if( ! parseInt( ApiCreds.clientId ) )
+		if( isNaN( parseInt( ApiCreds.clientId ) ) )
 			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'string' } );
 
 		if( typeof ApiCreds.userAgent !== 'string')
@@ -74,10 +75,10 @@ class BungieLib{
 		// Load only the preferred micro-libraries
 		} else {
 			loadMicroLibs.forEach( mlName => {
-				// Is there an entry for this Ml in Mls.json?
+				// Is there an entry for this Micro-library in microLibs.json?
 				if( typeof this.MicroLibs[ mlName ] !== 'object' ){
 					// Nope!, throw an error
-					throw new Ml.MlLoadError({
+					throw new Ml.MicroLibLoadError({
 						message: "The micro-library " + mlName + " failed to load",
 						reason: "The micro-library " + mlName + " does not have an entry in modules.json"
 					});
@@ -123,6 +124,7 @@ class BungieLib{
 	/**
 	 * Gets any active global alert for display in the forum banners, help pages, etc. Usually used for DOC alerts.
 	 * @param { boolean } [includeStreaming=true] - Determines whether Streaming Alerts are included in results
+	 * @returns { Promise }
 	 */
 	getGlobalAlerts( includestreaming = true ){
 		return Ml.renderEndpoint( '/GlobalAlerts/', {}, { includestreaming } )
@@ -132,6 +134,7 @@ class BungieLib{
 	/**
 	 * Uses an oAuthCode to request a oAuthToken
 	 * @param { string } authCode - The oAuthCode that was given to your client after they authorized your application
+	 * @returns { Promise }
 	 * @example
 	 * OAuth.requestAccessToken( Opts ).then( auth => {
 	 *     console.log( auth ); // Do something with the api response
@@ -154,6 +157,7 @@ class BungieLib{
 	/**
 	 * Refreshes an oAuth token
 	 * @param { string } refreshToken - The refresh token you were given with your access token
+	 * @ returns { Promise }
 	 * @example
 	 * OAuth.refreshAccessToken( Opts ).then( auth => {
 	 *     console.log( auth ); // Do something with the api response
