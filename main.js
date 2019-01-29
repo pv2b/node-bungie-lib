@@ -28,9 +28,9 @@ class BungieLib{
 	 * const Api = new BNetApi( ApiCreds, ['destiny2', 'user'] );
 	 */
 	constructor( ApiCreds, loadMicroLibs = ['all'] ){
-		
+
 		Request = new Ml.Request( ApiCreds );
-		
+
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
 			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
@@ -103,7 +103,7 @@ class BungieLib{
 		this.Endpoints = require( __dirname + "/Endpoints.js" );
 		this.authUri = this.Endpoints.authorization + "?response_type=code&client_id=" + this.ApiCreds.clientId;
 	}
-	
+
 	/**
 	 * List of available localization cultures
 	 * @returns { Promise }
@@ -111,7 +111,7 @@ class BungieLib{
 	getAvailableLocales(){
 		return Request.get( this.Endpoints.rootPath = this.Endpoints.getAvailableLocales );
 	}
-	
+
 	/**
 	 * Get the common settings used by the Bungie.Net environment.
 	 * @returns { Promise }
@@ -119,7 +119,7 @@ class BungieLib{
 	getCommonSettings(){
 		return Request.get( this.Endpoints.rootPath + this.Endpoints.getCommonSettings );
 	}
-	
+
 	/**
 	 * Gets any active global alert for display in the forum banners, help pages, etc. Usually used for DOC alerts.
 	 * @param { boolean } [includeStreaming=true] - Determines whether Streaming Alerts are included in results
@@ -128,7 +128,7 @@ class BungieLib{
 		return Ml.renderEndpoint( '/GlobalAlerts/', {}, { includestreaming } )
 			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
 	}
-	
+
 	/**
 	 * Uses an oAuthCode to request a oAuthToken
 	 * @param { string } authCode - The oAuthCode that was given to your client after they authorized your application
@@ -141,7 +141,7 @@ class BungieLib{
 	 */
 	async requestAccessToken( authCode = "NO_CODE_PROVIDED" ){
 		debug( 'Requesting access token with authCode : ' + authCode );
-		return Request.post( 
+		return Request.post(
 			this.Endpoints.rootPath + this.Endpoints.token,
 			QueryString.stringify( {
 				grant_type : "authorization_code",
@@ -150,7 +150,7 @@ class BungieLib{
 			} )
 		);
 	}
-	
+
 	/**
 	 * Refreshes an oAuth token
 	 * @param { string } refreshToken - The refresh token you were given with your access token
@@ -159,13 +159,13 @@ class BungieLib{
 	 *     console.log( auth ); // Do something with the api response
 	 * }).catch( e => {
 	 *    // Error handling
-	 * });	 
+	 * });
 	 */
-	async refreshAccessToken( oAuth ){	
+	async refreshAccessToken( oAuth ){
 		// They can pass the entire bungie.net oAuth object, or just the refreshToken
 		let refreshToken = ( typeof oAuth === 'object' ) ? oAuth.refresh_token : oAuth;
-	
-		return Request.post( 
+
+		return Request.post(
 			this.Endpoints.rootPath + this.Endpoints.refresh,
 			QueryString.stringify( {
 				grant_type : "refresh_token",
