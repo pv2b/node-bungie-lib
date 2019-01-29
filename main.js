@@ -15,6 +15,7 @@ class BungieLib{
 	 * @constructor
 	 * @param { ApiCreds } ApiCreds - An Object containing your API credentials
 	 * @param { array } loadMicroLibs - An array containing the names of the micro-libraries that you want to load
+	 * @returns { Promise }
 	 * @example
 	 * var ApiCreds = {
 	 *    key : "my_super_secret_api_key",
@@ -34,7 +35,7 @@ class BungieLib{
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
 			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
-		if( ! parseInt( ApiCreds.clientId ) )
+		if( isNaN( parseInt( ApiCreds.clientId ) ) )
 			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'string' } );
 
 		if( typeof ApiCreds.userAgent !== 'string')
@@ -77,7 +78,7 @@ class BungieLib{
 				// Is there an entry for this Micro-library in microLibs.json?
 				if( typeof this.MicroLibs[ mlName ] !== 'object' ){
 					// Nope!, throw an error
-					throw new Ml.MlLoadError({
+					throw new Ml.MicroLibLoadError({
 						message: "The micro-library " + mlName + " failed to load",
 						reason: "The micro-library " + mlName + " does not have an entry in modules.json"
 					});
