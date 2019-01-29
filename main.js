@@ -74,7 +74,7 @@ class BungieLib{
 		// Load only the preferred micro-libraries
 		} else {
 			loadMicroLibs.forEach( mlName => {
-				// Is there an entry for this Ml in Mls.json?
+				// Is there an entry for this Micro-library in microLibs.json?
 				if( typeof this.MicroLibs[ mlName ] !== 'object' ){
 					// Nope!, throw an error
 					throw new Ml.MlLoadError({
