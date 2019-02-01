@@ -14,6 +14,171 @@ const mlDebug = require( 'debug' )( "MicroLib" );
 const rDebug  = require( 'debug' )( "Request" );
 
 
+class Request {
+	/**
+	 * Makes HTTP requests
+	 * @constructor
+	 * @params( ApiCreds ) = Your API credentials;
+	 */
+	constructor( ApiCreds ){
+		this.ApiCreds = ApiCreds;
+		rDebug( "Request object created with credentials " + ApiCreds );
+	}
+	/**
+	 * Makes an HTTP GET request to the specified uri
+	 * @param { string } uri - The URI to perform the GET request on
+	 * @param { oAuth } [oAuth=false] - The oAuth credentials
+	 * @returns { Promise }
+	 */
+	get( uri, oAuth = false ){
+		rDebug( "Request.get called" );
+		rDebug( "\turi : " + uri );
+		rDebug( "\toAuth : " + JSON.stringify( oAuth ) );
+		return new Promise( ( resolve, reject ) => {
+
+			let	headers = {
+				"X-API-KEY": this.ApiCreds.key,
+				"User-Agent": this.ApiCreds.userAgent
+			}
+
+			// Send the appropriate authorization header
+			headers["Authorization"] = ( typeof oAuth == 'object' ) ?
+				"Bearer " + oAuth.access_token : // Use the oAuth token to
+				"Basic " + new Buffer.from( this.ApiCreds.clientId + ":" + this.ApiCreds.clientSecret ).toString( 'base64' );
+
+			rDebug( "-=-=-=-=- Headers Generated =-=-=-=-=");
+			rDebug( headers );
+			rDebug("-=-=-=-=-=-=- End Headers =-=-=-=-=-=-=");
+
+			rDebug( "======> Request sent" );
+			Https.get( uri, { headers }, Response => {
+				rDebug( "\tReceiving response" );
+				let data = '';
+
+				// How long of a result should we expect?
+				let len = parseInt( Response.headers['content-length'], 10 ) ;
+				let size = this._convertBytes( len );
+				let progress = 0;
+
+				rDebug( "Response is expected to be " + size );
+
+				// A chunk of data has been received.
+				Response.on('data', (chunk) => {
+					data     += chunk;
+					progress += chunk.length;
+				});
+
+				// The whole response has been received.
+				Response.on('end', () => {
+					// If the request was successful resolve the promise, otherwise reject it.
+					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
+						resolve( JSON.parse( data ) );
+					} else {
+						reject( data );
+					}
+				} );
+			} );
+		} );
+	}
+
+	/**
+	 * Performs an HTTPS post request
+	 * @param { string } uri - The full path you want to post to
+	 * @param { object } PostData - An object containing the keys/value pairs you want to post to the server
+	 * @param { oAuth } [oAuth=false] - The oAuth object retrieved from module:OAuth~OAuth.requestAccessToken
+	 * @returns { Promise }
+	 */
+	async post( uri, PostData, oAuth = false ){
+		rDebug( "Request.post called to " + uri );
+		rDebug( "======> uri : " + uri );
+		rDebug( "======> PostData : " + JSON.stringify( PostData ) )
+		rDebug( "======> oAuth : " + JSON.stringify( oAuth ) );
+
+		return new Promise( ( resolve, reject ) => {
+
+			// Parse the host and endpoint from the uri
+			let host = uri.substring( uri.indexOf('//') + 2 , uri.indexOf('.net/') + 4 );
+			let path = uri.substring( uri.indexOf('.net') + 4, uri.length );
+			var data = '';
+			let headers = {
+				"X-API-KEY"  : this.ApiCreds.key,
+				"User-Agent" : this.ApiCreds.userAgent
+			}
+
+			if( typeof PostData === 'object' ){
+				PostData = JSON.stringify( PostData );
+				headers["Content-Type"] = "application/json"
+			} else {
+				headers["Content-Type"] = "application/x-www-form-urlencoded"
+			}
+
+			headers["Content-Length"] = PostData.length;
+
+			// Send the appropriate authorization header
+			headers["Authorization"] = ( typeof oAuth == 'object' ) ?
+				"Bearer " + oAuth.access_token : // Use the oAuth token to
+				"Basic " + new Buffer.from( this.ApiCreds.clientId + ":" + this.ApiCreds.clientSecret ).toString( 'base64' );
+
+			rDebug( "headers are: " + JSON.stringify( headers ) );
+			rDebug( "======> Request sent" );
+			let request = Https.request( {
+			// Request options
+				host : host,
+				path : path,
+				port : 443,
+				method: "POST",
+				headers: headers
+			// Capture the response
+			}, Response => {
+				Response.on( 'data', chunk => {
+					data += chunk;
+				} );
+
+				Response.on( 'end', () => {
+					rDebug( "Entire response received" );
+					rDebug( data )
+
+					rDebug( Response.headers[ 'content-type' ].substring( 0, 16 ) );
+
+					// If the request was successful resolve the promise, otherwise reject it.
+					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
+						resolve( JSON.parse ( data ) );
+					} else {
+						reject( data );
+					}
+				} );
+			} );
+
+			// Post the data
+			request.write( PostData );
+			// End the request
+			request.end();
+		} );
+
+	}
+
+	// Converts bytes to larger units
+	_convertBytes( bytes, unit ){
+		let Conversions = {
+			B  : bytes,             // Bytes
+			KB : bytes / 1024,      // KiloBytes
+			MB : bytes / 1048576,   // MegaBytes
+			GB : bytes / 1073741824 // GigaBytes
+		};
+
+		let keys = Object.keys( Conversions );
+
+		if( typeof unit === 'string' )
+			return Conversions[ unit.toUpperCase() ];
+		else{
+			// If they didn't give a sane unit type, return the largest whole unit
+			let i = 0;
+			for( i; Conversions[ keys [ i ] ] >= 1.0 ; i++ ){}
+			return Conversions[ keys[ i - 1 ] ] + " " + keys[ i - 1 ];
+		}
+	}
+};
+
 /**
  * Generates a generic User-Agent header
  * @param { Object } Options - The data required to generate a Bungie.net Compatible API string
@@ -33,7 +198,7 @@ function generateUserAgent( ApiCreds ){
 	}
 
 	let email = ( typeof Info.author.email === 'undefined' ) ? 'N/A' : Info.author.email;
-	return `${Info.name}/${Info.version} AppId/${ApiCreds.clientId} (+${website};${email})`
+	return `${Info.name}/${Info.version} AppId/${ApiCreds.clientId} (+${website};${email})`;
 }
 
 class TypeError extends Error{
@@ -62,9 +227,9 @@ class TypeError extends Error{
 	constructor( TypeError ){
 		super( "TypeError:  " + TypeError.varName + " expected to be " + TypeError.expected + "; Got " + typeof TypeError.variable );
 
-		this.name = this.constructor.name;
-		this.varName = TypeError.varName;
-		this.expected = TypeError.expected;
+		this.name        = this.constructor.name;
+		this.varName     = TypeError.varName;
+		this.expected    = TypeError.expected;
 		this.failedValue = TypeError.variable;
 
 		Error.captureStackTrace( this, TypeError );
@@ -155,21 +320,21 @@ class EnumError extends Error{
  * @returns { Promise } - Resolves with the enumerated value, rejects with an {@link module:EnumError~EnumError|EnumError}
  */
 async function enumLookup( key, Table ){
-	mlDebug( "enumLookup( " + key +", " + JSON.stringify( Table ) + " )" );
+	mlDebug( "enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
 	return new Promise( ( resolve, reject ) => {
 		// convert string keys to uppercase
 		key = ( typeof key === "string" ) ? key.toUpperCase() : key;
 		let typeOf = typeof Table[ key ];
 
 		if( typeOf !== 'number' && typeOf !== 'string' ){
-			mlDebug( "\tREJECTED: enumLookup( " + key +", " + JSON.stringify( Table ) + " )" );
+			mlDebug( "\tREJECTED: enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
 			reject( new EnumError( {
 				key   : key,
 				Table : Table
 			} ) );
 		} else {
 			if( typeOf == 'string' ){
-				mlDebug("\tRESOLVED: enumLookup( " + key +", " + JSON.stringify( Table ) + " )" );
+				mlDebug("\tRESOLVED: enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
 				mlDebug( "\t=====> " + Table[key] );
 				resolve ( Table[key] );
 			} else {
@@ -253,7 +418,7 @@ async function renderEndpoint( uri, PathParams = {}, QueryStrings = null ){
 		let missingParams = rendered.match( /{\s*[\w\.]+\s*}/g );
 		if( missingParams !== null ){
 			// Pull values out of the braces
-			missingParams = missingParams.map( x => { return x.match( /[\w\.]+/)[0] } );
+			missingParams = missingParams.map( x => { return x.match( /[\w\.]+/ )[ 0 ] } );
 			mlDebug( "\tREJECTED: Parameters were missing " + missingParams );
 			reject( {
 				message: "Parameters were missing from the request",
@@ -324,189 +489,7 @@ function mapEnumSync( Obj ){
 }
 
 /**
- * Reverse maps and object to make enumeration lookup easier
- * @param ( Object ) Obj - Any simple object
- * @returns { Promise }
- */
-function mapEnum( Obj ){
-	return new Promise( ( resolve, reject ) => {
-		resolve( mapEnumSync( Obj ) );
-	} );
-}
-
-class Request {
-	/**
-	 * Makes HTTP requests
-	 * @constructor
-	 * @params( ApiCreds ) = Your API credentials;
-	 */
-	constructor( ApiCreds ){
-		this.ApiCreds = ApiCreds;
-		this.userAgent = ApiCreds.userAgent;
-		rDebug( "Request object created with credentials " + ApiCreds );
-	}
-	/**
-	 * Makes an HTTP GET request to the specified uri
-	 * @param { string } uri - The URI to perform the GET request on
-	 * @param { oAuth } [oAuth=false] - The oAuth credentials
-	 * @returns { Promise }
-	 */
-	get( uri, oAuth = false ){
-		rDebug( "Request.get called" );
-		rDebug( "\turi : " + uri );
-		rDebug( "\toAuth : " + JSON.stringify( oAuth ) );
-		return new Promise( ( resolve, reject ) => {
-
-			let	headers = {
-				"X-API-KEY": this.ApiCreds.key,
-				"User-Agent": this.userAgent
-			}
-
-			// Send the appropriate authorization header
-			headers["Authorization"] = ( typeof oAuth == 'object' ) ?
-				"Bearer " + oAuth.access_token : // Use the oAuth token to
-				"Basic " + new Buffer.from( this.ApiCreds.clientId + ":" + this.ApiCreds.clientSecret ).toString( 'base64' );
-
-			rDebug( "-=-=-=-=- Headers Generated =-=-=-=-=");
-			rDebug( headers );
-			rDebug("-=-=-=-=-=-=- End Headers =-=-=-=-=-=-=");
-
-			rDebug( "======> Request sent" );
-			Https.get( uri, { headers }, res => {
-				rDebug( "\tReceiving response" );
-				let data = '';
-
-				// How long of a result should we expect?
-				let len = parseInt( res.headers['content-length'], 10 ) ;
-				let size = this._convertBytes( len );
-				let progress = 0;
-
-				rDebug( "Response is expected to be " + size );
-
-				// A chunk of data has been received.
-				res.on('data', (chunk) => {
-					data     += chunk;
-					progress += chunk.length;
-				});
-
-				// The whole response has been received.
-				res.on('end', () => {
-					try{
-						rDebug( "\tAttempting to parse response..." )
-						data = JSON.parse( data );
-						rDebug( "\tSuccess!");
-						resolve( data );
-					} catch(e) { console.log( data ) };
-
-					// If the request was successful resolve the promise, otherwise reject it.
-					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
-						resolve( data );
-					} else {
-						reject( data );
-					}
-				} );
-			} );
-		} );
-	}
-
-	/**
-	 * Performs an HTTPS post request
-	 * @param { string } uri - The full path you want to post to
-	 * @param { object } PostData - An object containing the keys/value pairs you want to post to the server
-	 * @param { oAuth } [oAuth=false] - The oAuth object retrieved from module:OAuth~OAuth.requestAccessToken
-	 * @returns { Promise }
-	 */
-	async post( uri, PostData, oAuth = false ){
-		rDebug( "Request.post called to " + uri );
-		rDebug( "======> uri : " + uri );
-		rDebug( "======> PostData : " + JSON.stringify( PostData ) )
-		rDebug( "======> oAuth : " + JSON.stringify( oAuth ) );
-
-		return new Promise( ( resolve, reject ) => {
-
-			// Parse the host and endpoint from the uri
-			let host = uri.substring( uri.indexOf('//') + 2 , uri.indexOf('.net/') + 4 );
-			let path = uri.substring( uri.indexOf('.net') + 4, uri.length );
-			var data = '';
-			let headers = {
-				"X-API-KEY"  : this.ApiCreds.key,
-				"User-Agent" : this.ApiCreds.userAgent
-			}
-
-			if( typeof PostData === 'object' ){
-				PostData = JSON.stringify( PostData );
-				headers["Content-Type"] = "application/json"
-			} else {
-				headers["Content-Type"] = "application/x-www-form-urlencoded"
-			}
-
-			headers["Content-Length"] = PostData.length;
-
-			// Send the appropriate authorization header
-			headers["Authorization"] = ( typeof oAuth == 'object' ) ?
-				"Bearer " + oAuth.access_token : // Use the oAuth token to
-				"Basic " + new Buffer.from( this.ApiCreds.clientId + ":" + this.ApiCreds.clientSecret ).toString( 'base64' );
-
-			rDebug( "headers are: " + JSON.stringify( headers ) );
-			rDebug( "======> Request sent" );
-			let request = Https.request( {
-			// Request options
-				host : host,
-				path : path,
-				port : 443,
-				method: "POST",
-				headers: headers
-			// Capture the response
-			}, Response => {
-				Response.on( 'data', chunk => {
-					data += chunk;
-				} );
-
-				Response.on( 'end', () => {
-					rDebug( "Entire response received" );
-					rDebug( data )
-
-					rDebug( Response.headers[ 'content-type' ].substring( 0, 16 ) );
-
-					// If the request was successful resolve the promise, otherwise reject it.
-					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
-						resolve( JSON.parse ( data ) );
-					} else {
-						reject( data );
-					}
-				} );
-			} );
-
-			// Post the data
-			request.write( PostData );
-			// End the request
-			request.end();
-		} );
-
-	}
-
-	_convertBytes( bytes, unit ){
-		let Conversions = {
-			B  : bytes,             // Bytes
-			KB : bytes / 1024,      // KiloBytes
-			MB : bytes / 1048576,   // MegaBytes
-			GB : bytes / 1073741824 // GigaBytes
-		};
-
-		let keys = Object.keys( Conversions );
-
-		if( typeof unit === 'string' )
-			return Conversions[ unit.toUpperCase() ];
-		else{
-			let i = 0;
-			for( i; Conversions[ keys [ i ] ] >= 1.0 ; i++ ){}
-			return Conversions[ keys[ i - 1 ] ] + " " + keys[ i - 1 ];
-		}
-	}
-};
-
-/**
- * Return the value of the first parameter unless the first parameter is undefiend, then returns null;
+ * Return the value of the first parameter unless the first parameter is undefiend, then returns null
  * @param { arbitrary } val - The value whos default value is null
  * @returns { arbitrary } - Returns null if val is undefined, returns the value of val otherwise
  */
@@ -524,7 +507,6 @@ module.exports = {
 	generateUserAgent,
 	libInfo : Info,
 	Request,
-	mapEnum,
 	mapEnumSync,
 	nullable,
 	projectRoot

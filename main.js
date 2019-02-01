@@ -94,7 +94,7 @@ class BungieLib{
 						this[ ml.wrapperKey ] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
-						throw new Ml.MicroLibLoadError({
+						throw new Ml.MicroLibLoadError( {
 							message: "The micro-library " + mlname + " failed to load",
 							reason : e,
 							MicroLib: this.MicroLibs[ mlName ]
