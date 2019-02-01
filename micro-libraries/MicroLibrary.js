@@ -23,12 +23,13 @@ const rDebug  = require( 'debug' )( "Request" );
  *@see {@link https://github.com/Bungie-net/api#are-there-any-restrictions-on-the-api|Restrictions} for more information.
  */
 function generateUserAgent( ApiCreds ){
-	var website = "N/A"
-	if( typeof Info.homepage === 'undefined' ){
-		if( typeof Info.repository.url !== 'undefined' )
-			website = Info.repository.url;
-	} else {
+
+	if( typeof Info.homepage !== 'undefined ' ){
 		var website = Info.homepage;
+	} else if ( typeof Info.repository.url !== 'undefined' ){
+		var website = Info.repository.url;
+	} else {
+		var website = "N/A";
 	}
 
 	let email = ( typeof Info.author.email === 'undefined' ) ? 'N/A' : Info.author.email;

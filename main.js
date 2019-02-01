@@ -3,7 +3,7 @@
 const Fs = require ( 'fs' );
 const Path = require( 'path' );
 const QueryString = require( 'querystring' );
-const Ml = require( __dirname + "/lib/MicroLibrary.js" );
+const Ml = require( __dirname + "/micro-libraries/MicroLibrary.js" );
 var Request = null;
 const debug = require( 'debug' )( 'BungieLib' );
 
@@ -38,7 +38,7 @@ class BungieLib{
 		if( typeof ApiCreds.key !== 'string')
 			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
 		if( isNaN( parseInt( ApiCreds.clientId ) ) )
-			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'string' } );
+			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'number-like' } );
 
 		if( typeof ApiCreds.userAgent !== 'string')
 			ApiCreds.userAgent = Ml.generateUserAgent( ApiCreds );
@@ -47,13 +47,13 @@ class BungieLib{
 		this.MicroLibs = {}
 
 		// Parse the array of micro-libraries
-		JSON.parse ( Fs.readFileSync( __dirname + '/microLibs.json' ) ).forEach( MicroLib => {
+		JSON.parse ( Fs.readFileSync( __dirname + '/micro-libraries.json' ) ).forEach( MicroLib => {
 			this.MicroLibs[ MicroLib.name ] = MicroLib;
 		});
 
 		// Loads all modules by default
 		if( ! Array.isArray( loadMicroLibs ) ) {
-			console.warn( "Warning, loadModules was expected to be an array, got " + typeof loadMicroLibs );
+			console.warn( "Warning, loadMicroLibs was expected to be an array, got " + typeof loadMicroLibs );
 			console.warn( "-=-=-=-=- Loading all modules by default -=-=-=-=-" );
 			loadMicroLibs = ['all'];
 		}
@@ -81,24 +81,24 @@ class BungieLib{
 				if( typeof this.MicroLibs[ mlName ] !== 'object' ){
 					// Nope!, throw an error
 					throw new Ml.MicroLibLoadError({
-						message: "The micro-library " + mlName + " failed to load",
-						reason: "The micro-library " + mlName + " does not have an entry in modules.json"
+						message : "The micro-library " + mlName + " failed to load",
+						reason  : "The micro-library " + mlName + " does not have an entry in micro-libraries.json"
 					});
 				// Yep! try to load it
 				} else {
 					// cache the micro-library in question
-					let ml = this.MicroLibs[MlName];
+					let ml = this.MicroLibs[ MlName ];
 
-					// Try to create a new instance of the Ml
+					// Try to create a new instance of the micro-library
 					try{
-						this[ml.wrapperKey] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
+						this[ ml.wrapperKey ] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
 						throw new Ml.MicroLibLoadError({
 							message: "The micro-library " + mlname + " failed to load",
 							reason : e,
 							MicroLib: this.MicroLibs[ mlName ]
-						});
+						} );
 					}
 				}
 			} );
@@ -112,7 +112,7 @@ class BungieLib{
 	 * @returns { Promise }
 	 */
 	getAvailableLocales(){
-		return Request.get( this.Endpoints.rootPath = this.Endpoints.getAvailableLocales );
+		return Request.get( this.Endpoints.rootPath + this.Endpoints.getAvailableLocales );
 	}
 
 	/**
