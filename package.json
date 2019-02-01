@@ -19,7 +19,11 @@
     "node.js",
     "library"
   ],
-  "author": "Ty Meador",
+  "author": {
+  	"name" : "Ty Meador",
+	"email" : "ty@tylermeador.com",
+	"url" : "https://www.tylermeador.com"
+  },
   "license": "",
   "dependencies": {
     "debug": "^4.1.1",

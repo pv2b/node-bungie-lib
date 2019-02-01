@@ -32,6 +32,8 @@ class BungieLib{
 
 		Request = new Ml.Request( ApiCreds );
 
+		debug( "                                                                                                  " + Ml.generateUserAgent( ApiCreds ) );
+
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
 			throw new TypeError( { varName: 'ApiCreds.key', variable: ApiCreds.key, expected: 'string' } );
@@ -39,7 +41,7 @@ class BungieLib{
 			throw new TypeError( { varName: 'ApiCreds.clientId', variable: ApiCreds.clientId, expected: 'string' } );
 
 		if( typeof ApiCreds.userAgent !== 'string')
-			ApiCreds.userAgent = Ml.defaultUserAgent();
+			ApiCreds.userAgent = Ml.generateUserAgent( ApiCreds );
 
 		this.ApiCreds = ApiCreds;
 		this.MicroLibs = {}
@@ -136,13 +138,13 @@ class BungieLib{
 	 * @param { string } authCode - The oAuthCode that was given to your client after they authorized your application
 	 * @returns { Promise }
 	 * @example
-	 * OAuth.requestAccessToken( Opts ).then( auth => {
-	 *     console.log( auth ); // Do something with the api response
+	 * OAuth.requestAccessToken( authCode ).then( oAuth => {
+	 *     console.log( oAuth ); // Do something with the api response
 	 * }).catch( e => {
 	 *    // Error handling
 	 * });
 	 */
-	async requestAccessToken( authCode = "NO_CODE_PROVIDED" ){
+	requestAccessToken( authCode = "NO_CODE_PROVIDED" ){
 		debug( 'Requesting access token with authCode : ' + authCode );
 		return Request.post(
 			this.Endpoints.rootPath + this.Endpoints.token,
@@ -157,7 +159,7 @@ class BungieLib{
 	/**
 	 * Refreshes an oAuth token
 	 * @param { string } refreshToken - The refresh token you were given with your access token
-	 * @ returns { Promise }
+	 * @returns { Promise }
 	 * @example
 	 * OAuth.refreshAccessToken( Opts ).then( auth => {
 	 *     console.log( auth ); // Do something with the api response
@@ -165,7 +167,7 @@ class BungieLib{
 	 *    // Error handling
 	 * });
 	 */
-	async refreshAccessToken( oAuth ){
+	refreshAccessToken( oAuth ){
 		// They can pass the entire bungie.net oAuth object, or just the refreshToken
 		let refreshToken = ( typeof oAuth === 'object' ) ? oAuth.refresh_token : oAuth;
 
