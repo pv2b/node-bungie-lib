@@ -326,7 +326,7 @@ async function enumLookup( key, Table ){
 		key = ( typeof key === "string" ) ? key.toUpperCase() : key;
 		let typeOf = typeof Table[ key ];
 
-		if( typeOf !== 'number' && typeOf !== 'string' ){
+		if(  ( typeOf !== 'number' && typeOf !== 'string' ) ){
 			mlDebug( "\tREJECTED: enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
 			reject( new EnumError( {
 				key   : key,
@@ -510,4 +510,4 @@ module.exports = {
 	mapEnumSync,
 	nullable,
 	projectRoot
-}
+};

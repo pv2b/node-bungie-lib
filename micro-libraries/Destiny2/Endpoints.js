@@ -4,9 +4,9 @@
 /** An object containing all of the Destiny 2 endpoints */
 const endpoints = {
 	/** The starting path for all requests */
-	rootPath : "https://www.bungie.net",
+	rootPath : "https://www.bungie.net/Platform",
 	/** Returns the current version of the manifest as a json object. */
-	getDestinyManifest : "/Platform/Destiny2/Manifest/",
+	getDestinyManifest : "/Destiny2/Manifest/",
 	/** Returns the static definition of an entity of the given Type and hash identifier. Examine the API Documentation for the Type Names of entities that have their own definitions. Note that the return type will always *inherit from* DestinyDefinition, but the specific type returned will be the requested entity type if it can be found. Please don't use this as a chatty alternative to the Manifest database if you require large sets of data, but for simple and one-off accesses this should be handy. */
 	getDestinyEntityDefinition : "/Destiny2/Manifest/{entityType}/{hashIdentifier}/",
 	/** Returns a list of Destiny memberships given a full Gamertag or PSN ID. */

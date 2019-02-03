@@ -14,8 +14,9 @@ class Destiny2{
 	constructor( ApiCreds ){
 		this.ApiCreds  = ApiCreds;
 		Request        = new Ml.Request( ApiCreds );
+		this.Endpoints = require( __dirname + '/Endpoints.js');
+		this.Enums     = require( __dirname + '/Enums.js' );
 		this.Manifest  = {};
-		this.userAgent = ApiCreds.userAgent
 		this.manifestFiles = [];
 	}
 
@@ -153,12 +154,22 @@ class Destiny2{
 	 * Untested : Returns Destiny Profile information for the supplied membership.
 	 * @param { number-like } destinyMembershipId - Destiny membership ID
 	 * @param { module:Destiny2/Enum~bungieMembershipType } membershipType - A valid non-BungieNet membership typ
+	 * @param { Array.<module:Destiny2/Enum~destinyComponentType>} [components="profiles"] - An array of destiny components to return for
 	 * @returns { Promise }
 	 * @see {@link https://bungie-net.github.io/multi/operation_get_Destiny2-GetProfile.html#operation_get_Destiny2-GetProfile|Destiny2.getProfile} for more information
 	 */
-    getProfile( destinyMembershipId, membershipType ){
-	   return Ml.renderEndpoint( this.Endpoints.getProfile, { destinyMembershipId, membershiType } )
-		.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
+    getProfile( destinyMembershipId, membershipType, components = [ "profiles" ] ){
+		let enums = [
+			Ml.enumLookup( membershipType, this.Enums.bungieMembershipType )
+		];
+
+		components.forEach( comp => {
+			enums.push( Ml.enumLookup( comp, this.Enums.destinyComponentType ) );
+		} ) ;
+
+	   return Promise.all( enums )
+	   		.then( enums => Ml.renderEndpoint( this.Endpoints.getProfile, { destinyMembershipId, membershipType : enums[0] }, { components: enums.slice( 1, enums.length ).join( "," ) } ) )
+	   		.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
     }
 
     /**
@@ -187,7 +198,7 @@ class Destiny2{
 			}
 
 			// Create CSV string
-			Opts.components = Opts.components.join( ", " );
+			Opts.components = Opts.components.join( "," );
 
 			return 	Ml.renderEndpoint( this.Endpoints.getCharacter, {
 				characterId           : Opts.characterId,
@@ -203,8 +214,8 @@ class Destiny2{
 	 * @returns { Promise }
 	 * @see {@link https://bungie-net.github.io/multi/operation_get_Destiny2-GetClanWeeklyRewardState.html#operation_get_Destiny2-GetClanWeeklyRewardState|Destiny2.GetClanWeeklyRewardState} for more information
 	 */
-	getClanWeeklyRewardState( gId ){
-		return Ml.renderEndpoint( this.Endpoints.getClanWeeklyRewardState, { groupId : gId } )
+	getClanWeeklyRewardState( groupId ){
+		return Ml.renderEndpoint( this.Endpoints.getClanWeeklyRewardState, { groupId } )
 			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
 	}
 
@@ -228,13 +239,13 @@ class Destiny2{
 		return Promise.all( proms ).then( enums => {
 
 			// Set the proper ENUM values
-			Opts.mType = enums[0];
+			Opts.mType = enums[ 0 ];
 			for( let i = 1; i < enums.length; i++){
 				Opts.components[ i - 1] = enums[ i ];
 			}
 
 			// Create CSV string
-			Opts.components = Opts.components.join( ", " );
+			Opts.components = Opts.components.join( "," );
 
 			return 	Ml.renderEndpoint( this.Endpoints.getItem, {
 				characterId           : Opts.characterId,
@@ -270,7 +281,7 @@ class Destiny2{
 			}
 
 			// Create CSV string
-			Opts.components = Opts.components.join( ", " );
+			Opts.components = Opts.components.join( "," );
 
 			return 	Ml.renderEndpoint( this.Endpoints.getVendors, {
 				characterId           : Opts.characterId,
@@ -307,7 +318,7 @@ class Destiny2{
 			}
 
 			// Create CSV string
-			Opts.components = Opts.components.join( ", " );
+			Opts.components = Opts.components.join( "," );
 
 			return 	Ml.renderEndpoint( this.Endpoints.getVendors, {
 				characterId           : Opts.characterId,

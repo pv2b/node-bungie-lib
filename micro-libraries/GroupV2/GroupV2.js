@@ -52,12 +52,12 @@ class GroupV2 {
 	 * @param { BungieMembershipType } mType - The Destiny membership ype of linked account we are manipulating
 	 * @param { oAuth } oAuth - You oAUth credentials
 	 * @returns { Promise }
-	 */
-	async setUserClanInviteSetting( allowInvites, mtTpe, oAuth ){
-		return Ml.enumLookup( type, this.Enums.bungieMembershipType )
+	 *
+	async setUserClanInviteSetting( allowInvites, mType, oAuth ){
+		return Ml.enumLookup( mType, this.Enums.bungieMembershipType )
 			.then( type => Ml.renderEndpoint( this.Endpoints.setUserClanInviteSetting, { mType, allowInvites } ) )
 		.then( endpoint => Request.post( this.Endpoints.rootPath + endpoint , "" , oAuth ) );
-	}
+	}*/
 
 	/**
 	 * Gets groups recommended for you based on the groups to whom those you follow belong.
@@ -213,7 +213,7 @@ class GroupV2 {
 	 *   @param { module:GroupV2/Enum~groupHomepage } Options.groupHomepage -
 	 *   @param { module:GroupV2/Enum~bungieMembershipType } Options.platformMembershipType - When operation needs a platform specific account ID for the present user, use this property. In particular, groupType of Clan requires this value to be set
 	 * @param { oAuth } oAuth - Your oAuth tokens
-	 */
+	 *
 	createGroup( Opts, oAuth ){
 		debug( JSON.stringify( oAuth ) );
 		let enums = [
@@ -236,6 +236,7 @@ class GroupV2 {
 				return Request.post( this.Endpoints.rootPath + this.Endpoints.createGroup, Opts, oAuth )
 			});
 	}
+	*/
 
 	/**
 	 * UNTESTED : Edits a group.
@@ -272,14 +273,12 @@ class GroupV2 {
 			Ml.enumLookup( Opts.groupType, this.Enums.groupType ).catch( e => null )
 		];
 
-
-
 		// Null any nullable fields that weren't supplied
-		Opts.avatarImageIndex = this.nullable( Opts.avatarImageIndex );
-		Opts.isPublic = this.nullable( Opts.isPublic )
-		Opts.isPublicTopicAdminOnly = this.nullable( Opts.isPublicTopicAdminOnly );
-		Opts.allowChat = this.nullable( Opts.allowChat );
-		Opts.enableInvitationMessagingForAdmins = this.nullable( Opts.enableInvitationMessagingForAdmins );
+		Opts.avatarImageIndex = Ml.nullable( Opts.avatarImageIndex );
+		Opts.isPublic = Ml.nullable( Opts.isPublic )
+		Opts.isPublicTopicAdminOnly = Ml.nullable( Opts.isPublicTopicAdminOnly );
+		Opts.allowChat = Ml.nullable( Opts.allowChat );
+		Opts.enableInvitationMessagingForAdmins = Ml.nullable( Opts.enableInvitationMessagingForAdmins );
 
 		return  Promise.all( enums )
 			.then( enums => {
@@ -540,20 +539,21 @@ class GroupV2 {
 		} ).then( endpoint => Request.post( this.Endpoints.rootPath + endpoint , {}, oAuth ) );
 	}
 
-	/**
+	/*
 	 * UNTESTED : Request permission to join the given group.
 	 * @param { number-like } groupId - ID of the group you would like to join.
 	 * @param { module:GroupV2/Enum~bungieMembershipType } mType -
 	 * @param { string } message - The message to include in the request
 	 * @param { oAuth } oAuth - Your oAuth tokens
 	 * @returns { Promise }
-	 */
+	 *
 	async requestGroupMembership( groupId, mType, message, oAuth ){
 		mType = await Ml.enumLookup( Opts.mType, this.Enums.bungieMembershipType );
 
 		return Ml.renderEndpoint( this.Endpoints.requestGroupMembership, { groupId, membershipType } )
 			.then( endpoint => Request.post( this.Endpoints.rootPath + endpoint, { message }, oAuth ) );
 	}
+	*/
 
 	/**
 	 * Get the list of users who are awaiting a decision on their application to join a given group. Modified to include application info.
@@ -578,19 +578,20 @@ class GroupV2 {
 			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint, oAuth ) );
 	}
 
-	/**
+	/*
 	 * UNTESTED : Rescind your application to join the given group or leave the group if you are already a member..
 	 * @param { number-like } groupId - ID of the group
 	 * @param { module:GroupV2/Enum~bungieMembershipType } mType - MembershipType of the account to leave
 	 * @param { oAuth } oAuth - Your oAuth tokens
 	 * @returns { Promise }
-	 */
+	 *
 	async rescindGroupMembership( groupId, mType, oAuth ){
 		mType = await Ml.enumLookup( mType, this.Enums.bungieMembershipType );
 
 		return Ml.renderEndpoint( this.Endpoints.rescindGroupMembership, { groupId : groupId, membershipType : mType } )
 			.then( endpoint => Reqeust.post( this.Endpoints.rootPath + endpoint, {}, oAuth ) );
 	}
+	*/
 
 	/**
 	 * UNTESTED : Approve all of the pending users for the given group.

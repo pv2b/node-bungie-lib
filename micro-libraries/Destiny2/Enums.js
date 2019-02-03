@@ -1,6 +1,7 @@
 /** @module Destiny2/Enum */
 "use strict"
 
+const map = require( __dirname + '/../MicroLibrary.js' ).mapEnumSync;
 
 /**
  * @readonly
@@ -81,7 +82,7 @@ const destinyComponentType = {
 	description : "destiny component type"
 }
 
-/** 
+/**
  * @readonly
  * @enum { number } -
  */

@@ -26,7 +26,6 @@
   },
   "license": "",
   "dependencies": {
-    "debug": "^4.1.1",
-    "memcached": "^2.2.2"
+    "debug": "^4.1.1"
   }
 }
