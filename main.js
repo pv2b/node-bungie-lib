@@ -43,7 +43,7 @@ class BungieLib{
 		if( typeof ApiCreds.userAgent !== 'string')
 			ApiCreds.userAgent = Ml.generateUserAgent( ApiCreds );
 
-		this.ApiCreds = ApiCreds;
+		this.ApiCreds  = ApiCreds;
 		this.MicroLibs = {}
 
 		// Parse the array of micro-libraries
@@ -68,8 +68,8 @@ class BungieLib{
 					this[ ml.wrapperKey ] = new( require( __dirname + ml.path + ml.main ) )( this.ApiCreds );
 				} catch( e ){
 					throw new Ml.MicroLibLoadError( {
-						message : "The Micro-library " + this.MicroLibs[ key ].name + " failed to load",
-						reason : e,
+						message  : "The Micro-library " + this.MicroLibs[ key ].name + " failed to load",
+						reason   : e,
 						MicroLib : this.MicroLibs[ key ]
 					} );
 				}
@@ -95,9 +95,9 @@ class BungieLib{
 					// Something went wrong, panic and run in a circle
 					}catch( e ){
 						throw new Ml.MicroLibLoadError( {
-							message: "The micro-library " + mlname + " failed to load",
-							reason : e,
-							MicroLib: this.MicroLibs[ mlName ]
+							message  : "The micro-library " + mlname + " failed to load",
+							reason   : e,
+							MicroLib : this.MicroLibs[ mlName ]
 						} );
 					}
 				}
@@ -129,7 +129,7 @@ class BungieLib{
 	 * @returns { Promise }
 	 */
 	getGlobalAlerts( includestreaming = true ){
-		return Ml.renderEndpoint( '/GlobalAlerts/', {}, { includestreaming } )
+		return Ml.renderEndpoint( this.Endpoints.getGlobalAlerts, {}, { includestreaming } )
 			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
 	}
 
@@ -178,6 +178,38 @@ class BungieLib{
 				refresh_token : "" + refreshToken
 			} )
 		 );
+	}
+
+	/**
+	 * Get API usage by application for time frame specified. You can go as far back as 30 days ago, and can ask for up to a 48 hour window of time in a single request. You must be authenticated with at least the ReadUserData permission to access this endpoint.
+	 * @param { Object } Options - The data required to complete this API call
+	 *   @param { number-like } Options.applicationId - ID of the application to get usage statistics.
+	 *   @param { date-time } Options.End - End time for query. Goes to now if not spcified
+	 *   @param { date-time } Options.Start - Start time for query. Goes to 24 hours ago if not specified
+	 * @param { oAuth } oAuth - Your oAuth credentials
+	 * @returns { Promise }
+	 */
+	getApplicationApiUsage( Opts, oAuth ){
+		var applicationId = ( isNaN( parseInt( Opts.applicationId ) ) ) ? this.ApiCreds.clientId : Opts.applicationId;
+		var queryStrings  = {};
+
+		debug( "\t" + applicationId );
+
+		if( typeof Opts.End !== 'undefined' )
+			queryStrings.End = Opts.End;
+		if( typeof Opts.Start !== 'undefined' )
+			queryStrings.Start = Opts.Start
+
+		return Ml.renderEndpoint( this.Endpoints.getApplicationApiUsage, { applicationId }, queryStrings )
+			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint, oAuth ) );
+	}
+
+	/**
+	 * Get list of applications created by Bungie.
+	 * @returns { Promise }
+	 */
+	getBungieApplications(){
+		return Request.get( this.Endpoints.rootPath + this.Endpoints.getBungieApplications );
 	}
 }
 

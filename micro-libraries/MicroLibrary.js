@@ -400,7 +400,7 @@ async function renderEndpoint( uri, PathParams = {}, QueryStrings = null ){
 		if( typeof PathParams !== 'object' )
 			reject( "You did not provide an Object containing your key/value pairs");
 		if( typeof uri !== 'string')
-			reject("The uri " + uri + " is not valid");
+			reject("The endpoint uri \"" + uri + "\" is not valid");
 
 		var rendered = uri;
 		let search = '';
