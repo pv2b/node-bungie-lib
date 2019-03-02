@@ -1,7 +1,6 @@
 /** @module Destiny2 */
 "use strict"
 const Ml = require( __dirname + "/../MicroLibrary.js" );
-const debug = require( 'debug' )( 'Destiny2' );
 const Fs = require( 'fs' );
 const Util = require( 'util' );
 const Path = require( 'path' );
@@ -53,14 +52,11 @@ class Destiny2{
 			this.manifestFiles = files;
 			let readFile = Util.promisify( Fs.readFile );
 			let proms = [];
-			debug( 'looking for manifest ' + lang );
 			files.forEach( file => {
 				// Each manifest file is named lang.json. For instance the 'en' manifest JSON file is named en.json.
 				if( lang === 'all' || file === lang + '.json' ){
-					debug( 'found manifest "' + lang + '" Loading....' );
 					proms.push( readFile( Path.join( startPath, file ) ).then( contents => {
 						this.Manifest[ lang ] = JSON.parse( contents );
-						debug( 'done!' );
 						return this.Manifest[ lang ];
 					} ) );
 				}
@@ -80,13 +76,10 @@ class Destiny2{
 	 * @see {@link https://github.com/vpzed/Destiny2-API-Info/wiki/API-Introduction-Part-3-Manifest|Destiny2 Manifest Intro} for more information
 	 */
 	async downloadManifest( lang = 'en' ){
-		debug( 'downloading mainfiest ' + lang );
 		let manifestContent = await this.getMeta().then( Meta => Request.get( this.Endpoints.rootPath + Meta.Response.jsonWorldContentPaths[ lang ], false ) );
 		let path = __dirname + '/manifests/' + lang + '.json';
-		debug( 'writing manifest to file...' )
 		Fs.writeFile( path, JSON.stringify( manifestContent ), err => {
 			if( err ) throw err;
-			debug( 'done!' );
 			return path;
 		} )
 	}
@@ -97,25 +90,21 @@ class Destiny2{
 	 * @see {@link https://bungie-net.github.io/multi/operation_get_Destiny2-GetDestinyManifest.html#operation_get_Destiny2-GetDestinyManifest|Destiny2.GetManifest} for more information
 	 */
 	async getMeta(){
-		debug( 'getting meta data ' )
 		return new Promise( ( resolve, reject ) => {
 
 			if( this._Meta === null ){
-				debug( 'meta data does not exist, fetching...' )
 				resolve( Request.get( this.Endpoints.rootPath + this.Endpoints.getDestinyManifest ) ).then( Meta => {
-					debug( 'done!' );
 					this._Meta = Meta;
 					return Meta;
 				} );
 			} else {
-				debug( 'done!' );
 				resolve( this._Meta );
 			}
 		} );
 	}
 
 	/**
-	 * Untested : Returns the static definition of an entity of the given Type and hash identifier. Examine the API Documentation for the Type Names of entities that have their own definitions. Note that the return type will always *inherit from* DestinyDefinition, but the specific type returned will be the requested entity type if it can be found. Please don't use this as a chatty alternative to the Manifest database if you require large sets of data, but for simple and one-off accesses this should be handy.
+	 * Returns the static definition of an entity of the given Type and hash identifier. Examine the API Documentation for the Type Names of entities that have their own definitions. Note that the return type will always *inherit from* DestinyDefinition, but the specific type returned will be the requested entity type if it can be found. Please don't use this as a chatty alternative to the Manifest database if you require large sets of data, but for simple and one-off accesses this should be handy.
 	 * @param { string } entityType - The type of entity for whom you would like results. These correspond to the entity's definition contract name. For instance, if you are looking for items, this property should be 'DestinyInventoryItemDefinition'. PREVIEW: This endpoint is still in beta, and may experience rough edges. The schema is tentatively in final form, but there may be bugs that prevent desirable operation.
 	 * @param { number-like } hashIdentifier - The hash identifier for the specific Entity you want returned.
 	 * @returns { Promise }
@@ -127,7 +116,7 @@ class Destiny2{
 	}
 
 	/**
-	 * UNTESTED: Returns a list of Destiny memberships given a full Gamertag or PSN ID.
+	 * Returns a list of Destiny memberships given a full Gamertag or PSN ID.
 	 * @param { string } displayName - The full gamertag or PSN id of the player. Spaces and case are ignored.
 	 * @param { module:Destiny2/Enum~bungieMembershipType } [membershipType="all"] - A valid non-BungieNet membership type, or All.
 	 * @returns { Promise }
@@ -139,7 +128,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested : Returns a summary information about all profiles linked to the requesting membership type/membership ID that have valid Destiny information. The passed-in Membership Type/Membership ID may be a Bungie.Net membership or a Destiny membership. It only returns the minimal amount of data to begin making more substantive requests, but will hopefully serve as a useful alternative to UserServices for people who just care about Destiny data. Note that it will only return linked accounts whose linkages you are allowed to view.
+	 * Returns a summary information about all profiles linked to the requesting membership type/membership ID that have valid Destiny information. The passed-in Membership Type/Membership ID may be a Bungie.Net membership or a Destiny membership. It only returns the minimal amount of data to begin making more substantive requests, but will hopefully serve as a useful alternative to UserServices for people who just care about Destiny data. Note that it will only return linked accounts whose linkages you are allowed to view.
 	 * @param { number-like } membershipId - The ID of the membership whose linked Destiny accounts you want returned. Make sure your membership ID matches its Membership Type: don't pass us a PSN membership ID and the XBox membership type, it's not going to work!
 	 * @param { module:Destiny2/Enum~bungieMembershipType } [membershipType="ALL"] - The type for the membership whose linked Destiny accounts you want returned.
 	 * @returns { Promise }
@@ -151,7 +140,7 @@ class Destiny2{
 	}
 
     /**
-	 * Untested : Returns Destiny Profile information for the supplied membership.
+	 * Returns Destiny Profile information for the supplied membership.
 	 * @param { number-like } destinyMembershipId - Destiny membership ID
 	 * @param { module:Destiny2/Enum~bungieMembershipType } membershipType - A valid non-BungieNet membership typ
 	 * @param { Array.<module:Destiny2/Enum~destinyComponentType>} [components="profiles"] - An array of destiny components to return for
@@ -173,7 +162,7 @@ class Destiny2{
     }
 
     /**
-	 * Untested : Returns character information for the supplied character.
+	 * Returns character information for the supplied character.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.characterId - ID of the character.
 	 *   @param { number-like } Options.destinymembershipId - Destiny membership ID.
@@ -220,7 +209,7 @@ class Destiny2{
 	}
 
 	/**
-	 * UNTESTED : Retrieve the details of an instanced Destiny Item. An instanced Destiny item is one with an ItemInstanceId. Non-instanced items, such as materials, have no useful instance-specific details and thus are not queryable here.
+	 * Retrieve the details of an instanced Destiny Item. An instanced Destiny item is one with an ItemInstanceId. Non-instanced items, such as materials, have no useful instance-specific details and thus are not queryable here.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.destinyMembershipId - The membership ID of the destiny profile.
 	 *   @param { number-like } Options.itemInstanceId - The Instance ID of the destiny item.
@@ -256,7 +245,7 @@ class Destiny2{
 	}
 
 	/**
-	 * UNTESTED : Get currently available vendors from the list of vendors that can possibly have rotating inventory. Note that this does not include things like preview vendors and vendors-as-kiosks, neither of whom have rotating/dynamic inventories. Use their definitions as-is for those.
+	 * Get currently available vendors from the list of vendors that can possibly have rotating inventory. Note that this does not include things like preview vendors and vendors-as-kiosks, neither of whom have rotating/dynamic inventories. Use their definitions as-is for those.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.destinyMembershipId - The membership ID of the destiny profile.
 	 *   @param { number-like } Options.characterId - The Destiny Character ID of the character for whom we're getting vendor info.
@@ -292,7 +281,7 @@ class Destiny2{
 	}
 
 	/**
-	 * UNTESTED : Get the details of a specific Vendor.
+	 * Get the details of a specific Vendor.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.destinyMembershipId - The membership ID of the destiny profile.
 	 *   @param { number-like } Options.characterId - The Destiny Character ID of the character for whom we're getting vendor info.
@@ -330,7 +319,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested : Transfer an item to/from your vault. You must have a valid Destiny account. You must also pass BOTH a reference AND an instance ID if it's an instanced item. itshappening.gif
+	 * Transfer an item to/from your vault. You must have a valid Destiny account. You must also pass BOTH a reference AND an instance ID if it's an instanced item. itshappening.gif
 	 * @param { Object } Options - the data required to complete this API call
 	 *   @param { number-like } Options.itemReferenceHash -
 	 *   @param { number-like } Options.stackSize -
@@ -348,7 +337,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested : Extract an item from the Postmaster, with whatever implications that may entail. You must have a valid Destiny account. You must also pass BOTH a reference AND an instance ID if it's an instanced item.
+	 * Extract an item from the Postmaster, with whatever implications that may entail. You must have a valid Destiny account. You must also pass BOTH a reference AND an instance ID if it's an instanced item.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.itemReferencehash -
 	 *   @param { number-like } Options.stackSize -
@@ -364,7 +353,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested : Equip an item. You must have a valid Destiny Account, and either be in a social space, in orbit, or offline.
+	 * Equip an item. You must have a valid Destiny Account, and either be in a social space, in orbit, or offline.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.itemId -
 	 *   @param { number-like } Options.characterId -
@@ -435,7 +424,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested : Gets historical stats definitions.
+	 * Gets historical stats definitions.
 	 * @returns { Promise }
 	 * @see {@link https://bungie-net.github.io/multi/operation_get_Destiny2-GetHistoricalStatsDefinition.html#operation_get_Destiny2-GetHistoricalStatsDefinition|Destiny2.GetHistoricalStatsDefinition}
 	 */
@@ -443,7 +432,7 @@ class Destiny2{
 		return Request.get( this.Endpoints.rootPath + this.Endpoints.getHistoricalStatsDefinition );
 	}
 	/**
-	 * Untested : Gets a page list of Destiny items.
+	 * Gets a page list of Destiny items.
 	 * @param { string } searchTerm - The string to use when searching for Destiny entities.
 	 * @param { string } type - The type of entity for whom you would like results. These correspond to the entity's definition contract name. For instance, if you are looking for items, this property should be 'DestinyInventoryItemDefinition'.
 	 * @param { string } [page=0] - Page number to return, starting with 0.
@@ -456,7 +445,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested : Gets historical stats for indicated character.
+	 * Gets historical stats for indicated character.
 	 * @param { Object } Options - THe datat required to complete this API call
 	 *   @param { number-like } Options.characterId - The id of the character to retrieve. You can omit this character ID or set it to 0 to get aggregate stats across all characters.
 	 *   @param { number-like } Options.destinyMembershipId - The Destiny membershipId of the user to retrieve.
@@ -540,7 +529,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested - Gets activity history stats for indicated character.
+	 * Gets activity history stats for indicated character.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.characterId - The id of the character to retrieve.
 	 *   @param { number-like } Options.destinyMembershipId - The Destiny membershipId of the user to retrieve.
@@ -567,7 +556,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested - Gets details about unique weapon usage, including all exotic weapons.
+	 * Gets details about unique weapon usage, including all exotic weapons.
 	 * @param { number-like } characterId - The id of the character to retrieve.
 	 * @param { number-like } destinyMembershipId - The Destiny membershipId of the user to retrieve.
 	 * @param { module:Destiny2/Enum~bungieMembershipType } membershipTye - A valid non-BungieNet membership type.
@@ -580,7 +569,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested - Gets all activities the character has participated in together with aggregate statistics for those activities.
+	 * Gets all activities the character has participated in together with aggregate statistics for those activities.
 	 * @param { number-like } characterId - The id of the character to retrieve.
 	 * @param { number-like } destinyMembershipId - The Destiny membershipId of the user to retrieve.
 	 * @param { module:Destiny2/Enum~bungieMembershipType } membershipTye - A valid non-BungieNet membership type.
@@ -613,7 +602,7 @@ class Destiny2{
 	}
 
 	/**
-	 * Untested - Initialize a request to perform an advanced write action.
+	 * Initialize a request to perform an advanced write action.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param {module:Destiny2/Enum~awaType } Options.type -
 	 *   @param { module:Destiny2/Enum~bungieMembershipType } Options.membershipType - Destiny membership type of the account to modify.
