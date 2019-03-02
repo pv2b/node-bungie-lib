@@ -1,6 +1,6 @@
 {
   "name": "node-bungie-lib",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "description": "A zero dependency library for the Bungie.net api",
   "main": "main.js",
   "scripts": {
@@ -24,8 +24,5 @@
 	"email" : "ty@tylermeador.com",
 	"url" : "https://www.tylermeador.com"
   },
-  "license": "",
-  "dependencies": {
-    "debug": "^4.1.1"
-  }
+  "license": ""
 }
