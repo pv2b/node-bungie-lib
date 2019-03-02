@@ -1,5 +1,5 @@
 {
-  "name": "node-bungie-lib",
+  "name": "bungie-net-api",
   "version": "1.0.0",
   "description": "A zero dependency library for the Bungie.net api",
   "main": "main.js",
