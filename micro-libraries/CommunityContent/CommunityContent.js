@@ -1,7 +1,6 @@
 /** @module CommunityContent */
 "use strict"
 const Ml = require( __dirname + '/../MicroLibrary.js' );
-const debug = require( 'debug' )( 'CommunityContent' );
 let Request = null;
 
 class CommunityContent {
@@ -80,9 +79,6 @@ class CommunityContent {
 		] ).then( enums => {
 			partnershipType = enums[ 0 ];
 			sort = enums[ 1 ];
-
-			debug( partnershipType );
-
 			return Ml.renderEndpoint( this.Endpoints.getCommunityLiveStatusesForClanmates, { page, partnershipType, sort } )
 		} ).then( endpoint => Request.get( this.Endpoints.rootPath + endpoint ) );
 	}
