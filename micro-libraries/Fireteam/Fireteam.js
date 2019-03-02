@@ -13,7 +13,7 @@ class Fireteam{
 		this.ApiCreds = ApiCreds;
 		Request = new Ml.Request( ApiCreds );
 	}
-	
+
 	/**
 	 * Gets a count of all active non-public fireteams for the specified clan. Maximum value returned is 25.
 	 * @param { number-like } groupId - The group id of the clan
@@ -24,9 +24,9 @@ class Fireteam{
 		return Ml.renderEndpoint( this.Endpoints.getActivePrivateClanFireteamCount, { groupId} )
 			.then( endpoint => Request.get( this.Endpoitns.rootPath + endpoint, oAuth ) );
 	}
-	
+
 	/**
-	 * Untested : Gets a listing of all of this clan's fireteams that are have available slots. Caller is not checked for join criteria so caching is maximized.
+	 * Gets a listing of all of this clan's fireteams that are have available slots. Caller is not checked for join criteria so caching is maximized.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { module:Fireteam/Enum~fireteamActivityType } Options.activityType - The activity type to filter by.
 	 *   @param { module:Fireteam/Enum~fireteamDateRange } Options.dateRange - The date range to grab available fireteams.
@@ -53,7 +53,7 @@ class Fireteam{
 			Opts.publicOnly   = enums[ 3 ];
 			Opts.slotFilter   = enums[ 4 ];
 			Opts.page         = ( isNaN( parseInt( Opts.page ) ) ) ? 0 : Opts.page;
-			
+
 			return Ml.renderEndpoint( this.Endpoints.getAvailableClanFireteams,{
 				activityType : Opts.activityType,
 				dateRange    : Opts.dateRange,
@@ -67,9 +67,9 @@ class Fireteam{
 			} );
 		} ).then( endpoint => Request.get( this.Endpoints.rootPath + endpoint, oAuth ) );
 	}
-	
-	/** 
-	 * Untested : Gets a listing of all public fireteams starting now with open slots. Caller is not checked for join criteria so caching is maximized.
+
+	/**
+	 * Gets a listing of all public fireteams starting now with open slots. Caller is not checked for join criteria so caching is maximized.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { module:Fireteam/Enum~fireteamActivityType } Options.activityType - The activity type to filter by.
 	 *   @param { module:Fireteam/Enum~fireteamDateRange } Options.dateRange - The date range to grab available fireteams.
@@ -90,7 +90,7 @@ class Fireteam{
 			Opts.platform     = enums[ 2 ];
 			Opts.slotFilter   = enums[ 3 ];
 			Opts.page         = ( isNaN( parseInt( Opts.page ) ) ) ? 0 : Opts.page;
-			
+
 			return Ml.renderEndpoint( this.Endpoints.searchPublicAvailableClanFireteams,{
 				activityType : Opts.activityType,
 				dateRange    : Opts.dateRange,
@@ -103,9 +103,9 @@ class Fireteam{
 			} );
 		} ).then( endpoint => Request.get( this.Endpoints.rootPath + endpoint, oAuth ) );
 	}
-	
+
 	/**
-	 * Untested : Gets a listing of all clan fireteams that caller is an applicant, a member, or an alternate of.
+	 * Gets a listing of all clan fireteams that caller is an applicant, a member, or an alternate of.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.groupId - The group id of the clan. (This parameter is ignored unless the optional query parameter groupFilter is true).
 	 *   @param { boolean } Options.includeClosed - If true, return fireteams that have been closed.
@@ -130,9 +130,9 @@ class Fireteam{
 			langFilter  : Opts.langFilter
 		} ) ).then( endpoint => Request.get( this.Endpoints.rootPath + endpoint, oAuth ) );
 	}
-	
+
 	/**
-	 * Untested : Gets a specific clan fireteam.
+	 * Gets a specific clan fireteam.
 	 * @param { number-like } fireteamId - The unique id of the fireteam
 	 * @param { number-like } groupId - The group id of the clan
 	 * @param { oAuth } oAuth - Your oAuth tokens
