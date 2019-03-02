@@ -4,7 +4,6 @@ const Fs       = require( 'fs' );
 const MicroLib = require( __dirname + '/../MicroLibrary.js');
 const Https    = require( 'https' );
 const QueryString = require( 'querystring' );
-const debug = require( 'debug' )( "Forum" )
 var Request = null;
 
 class Forum{
@@ -109,7 +108,6 @@ class Forum{
 
 		// Return the promise that Request.get returned to us here
 		return Promise.all( enumLookups ).then( enums => {
-			  debug( enums )
 			let PathParams = {
 				page : Opts.page,
 				categoryFilter: enums[0],
