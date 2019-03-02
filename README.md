@@ -1,12 +1,8 @@
 # Node.js Bungie.net API Library
 This library aims to be the fastest, lightest-weight JavaScript implementation of the Bungie.net API. This project has 3 sacred goals
 1. Zero Dependency
-1. Fully Asynchronous 
+1. Fully Asynchronous
 1. Well Documented
-
-# HELP NEEDED
-All of the library is written and just needs to be tested. Please look through the issues list and consider testing a few APICalls for me. Leave a comment on that issue with the outcome
-so that I know which calls I can make as good, and which calls I need to fix.
 
 ## Setup
 1. First create a project at `https://www.bungie.net/en/Application`
@@ -19,9 +15,9 @@ so that I know which calls I can make as good, and which calls I need to fix.
     clientId : "your_client_id",
     clientSecret: "your_client_secret"
   }
-  
+
   const BungieLib = require( 'bungie-lib' );
-  
+
   // This will load ALL micro-libraries
   const Api = new BungieLib( ApiCredentials );
 ```
@@ -32,9 +28,9 @@ so that I know which calls I can make as good, and which calls I need to fix.
     clientId : "your_client_id",
     clientSecret: "your_client_secret"
   }
-  
+
   const BungieLib = require( 'bungie-lib' );
-  
+
   // This will only load the Destiny2, Forum, and User Micro-Libraries
   const Api = new BungieLib( ApiCredentials, [ 'destiny2', 'forum', 'user' ] );
 ```
@@ -65,7 +61,7 @@ This means that you can make as many API calls as you want simultaneously.
     Api.Destiny2.searchPlayer( "JackSparrow", "TIGERPSN" ),
     Api.Trending.getTrendingCategory()
   ];
-  
+
   // Once all of those API calls have finished, do work
   Promise.all( calls ).then( data => {
     // data[0] is the result of Api.User.searchUsers( 'JackSparrow' ), etc
