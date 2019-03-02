@@ -2,7 +2,6 @@
 "use strict"
 const Ml = require( __dirname + "/../MicroLibrary.js" );
 const QueryString = require( 'querystring' );
-const debug = require( 'debug' )( "GroupV2" );
 var Request = null;
 
 class GroupV2 {
@@ -137,9 +136,6 @@ class GroupV2 {
 				Query.groupMemberCountFilter = null;
 				Query.localeFilter = null;
 			}
-
-			debug( "Query is " + JSON.stringify( Query ) );
-
 			// The Query has been built, make the request
 			return Request.post( this.Endpoints.rootPath + this.Endpoints.groupSearch, Query );
 		} );
@@ -192,54 +188,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Create a new group.
-	 * @param { Object } Options - The various options required by this API call
-	 *   @param { module:GroupV2/Enum~groupType } Options.groupType - Type of group, either Bungie.net hosted group, or a game services hosted clan.
-	 *   @param { string } Options.name -
-	 *   @param { string } Options.about -
-	 *   @param { string } Options.motto -
-	 *   @param { string } Options.theme -
-	 *   @param { number-like } Options.avatarImageIndex -
-	 *   @param { string } Options.tags -
-	 *   @param { boolean } Options.isPublic -
-	 *   @param { module:GroupV2/Enum~membershipOption } Options.membershipOption -
-	 *   @param { boolean } Options.isPublicTopicAdminOnly -
-	 *   @param { boolean } Options.isDefaultPostPublic -
-	 *   @param { boolean } Options.allowChat -
-	 *   @param { boolean } Options.isDefaultPostAlliance -
-	 *   @param { module:GroupV2/Enum~chatSecuritySetting } Options.chatSecuritySetting -
-	 *   @param { string } Options.callsign -
-	 *   @param { string } Options.locale -
-	 *   @param { module:GroupV2/Enum~groupHomepage } Options.groupHomepage -
-	 *   @param { module:GroupV2/Enum~bungieMembershipType } Options.platformMembershipType - When operation needs a platform specific account ID for the present user, use this property. In particular, groupType of Clan requires this value to be set
-	 * @param { oAuth } oAuth - Your oAuth tokens
-	 *
-	createGroup( Opts, oAuth ){
-		debug( JSON.stringify( oAuth ) );
-		let enums = [
-			Ml.enumLookup( Opts.membershipOption, this.Enums.membershipOption ),
-			Ml.enumLookup( Opts.chatSecuritySetting, this.Enums.chatSecuritySetting ),
-			Ml.enumLookup( Opts.groupHomepage, this.Enums.groupHomepage ),
-			Ml.enumLookup( Opts.platformMembershipType, this.Enums.bungieMembershipType ),
-			Ml.enumLookup( Opts.groupType, this.Enums.groupType )
-		];
-
-
-		return  Promise.all( enums )
-			.then( enums => {
-				Opts.membershipOption = enums[0];
-				Opts.chatSecuritySetting = enums[1];
-				Opts.groupHomepage = enums[2];
-				Opts.platformMembershipType = enums[3];
-				Opts.groupType = enums[4];
-
-				return Request.post( this.Endpoints.rootPath + this.Endpoints.createGroup, Opts, oAuth )
-			});
-	}
-	*/
-
-	/**
-	 * UNTESTED : Edits a group.
+	 * Edits a group.
 	 * @param { Object } Options - The various options required by this API call
 	 *   @param { string } Options.name -
 	 *   @param { string } Options.about -
@@ -263,7 +212,6 @@ class GroupV2 {
 	 * @param { oAuth } oAuth - Your oAuth tokens
 	 */
 	editGroup( Opts, oAuth ){
-		debug( JSON.stringify( oAuth ) );
 		// These will either resolve with the correct enumeration string, or return null.( all fields are nullable )
 		let enums = [
 			Ml.enumLookup( Opts.membershipOption, this.Enums.membershipOption ).catch( e => null ),
@@ -287,13 +235,12 @@ class GroupV2 {
 				Opts.groupHomepage = enums[2];
 				Opts.platformMembershipType = enums[3];
 				Opts.groupType = enums[4];
-				debug( JSON.stringify(oAuth));
 				return Request.post( this.Endpoints.rootPath + this.Endpoints.createGroup, Opts, oAuth )
 			});
 	}
 
 	/**
-	 * UNTESTED : Edit an existing group's clan banner. You must have suitable permissions in the group to perform this operation. All fields are required.
+	 * Edit an existing group's clan banner. You must have suitable permissions in the group to perform this operation. All fields are required.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } Options.groupId - Group ID of the group to edit
 	 *   @param { number-like } Options.decalId -
@@ -320,7 +267,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Edit group options only available to a founder. You must have suitable permissions in the group to perform this operation.
+	 * Edit group options only available to a founder. You must have suitable permissions in the group to perform this operation.
 	 * @param { Object } Options - The data required to complete whit API call
 	 *   @param { number-like } Options.groupId - Group ID of the group to edit
 	 *   @param { ?boolean } [Options.invitePermissionOverride=null] - Minimum Member Level allowed to invite new members to group
@@ -370,7 +317,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED Add a new optional conversation/chat channel. Requires Admin permissions to the group.
+	 * Add a new optional conversation/chat channel. Requires Admin permissions to the group.
 	 * @param { Object } Options - The data required to complete whit API call
 	 *   @param { number-like } Options.groupId - Group ID of the group to edit.
 	 *   @param { number-like } Options.conversationId - Conversation Id of the channel being edited.
@@ -425,7 +372,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Edit the membership type of a given member. You must have suitable permissions in the group to perform this operation.
+	 * Edit the membership type of a given member. You must have suitable permissions in the group to perform this operation.
 	 * @param { Object } Options - The data required to complete this API call
 	 *   @param { number-like } groupId - ID of the group to which the member belongs.
 	 *   @param { number-like } membershipId - Membership ID to modify.
@@ -453,7 +400,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Kick a member from the given group, forcing them to reapply if they wish to re-join the group. You must have suitable permissions in the group to perform this operation.
+	 * Kick a member from the given group, forcing them to reapply if they wish to re-join the group. You must have suitable permissions in the group to perform this operation.
 	 * @param { Object } Options - The data required to complete whit API request.
 	 *   @param { number-like } Options.groupId - Group ID to kick the user from.
 	 *   @param { number-like } Options.membershipId - Membership ID to kick.
@@ -471,7 +418,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Bans the requested member from the requested group for the specified period of time.
+	 * Bans the requested member from the requested group for the specified period of time.
 	 * @param { Object } Options - The data required to complete whit API request.
 	 *   @param { number-like } Options.groupId - Group ID that has the member to ban.
 	 *   @param { number-like } Options.membershipId - Membership ID of the member to ban from the group.
@@ -489,7 +436,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Unbans the requested member, allowing them to re-apply for membership.
+	 * Unbans the requested member, allowing them to re-apply for membership.
 	 * @param { Object } Options - The data required to complete whit API request.
 	 *   @param { number-like } Options.groupId - Group ID that has the member to ban.
 	 *   @param { number-like } Options.membershipId - Membership ID of the member to ban from the group.
@@ -509,7 +456,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Get the list of banned members in a given group. Only accessible to group Admins and above. Not applicable to all groups. Check group features.
+	 * Get the list of banned members in a given group. Only accessible to group Admins and above. Not applicable to all groups. Check group features.
 	 * @param { number-like } groupId - Group ID whose banned members you are fetching
 	 * @param { number-like } [currentPage=1] - Page number (starting with 1). Each page has a fixed size of 50 entries.
 	 * @param { oAuth } oAuth - Your oAuth tokens
@@ -521,7 +468,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : An administrative method to allow the founder of a group or clan to give up their position to another admin permanently.
+	 * An administrative method to allow the founder of a group or clan to give up their position to another admin permanently.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.founderIdNew - The new founder for this group. Must already be a group admin.
 	 *   @param { number-like } Options.groupId - The target group id.
@@ -540,7 +487,7 @@ class GroupV2 {
 	}
 
 	/*
-	 * UNTESTED : Request permission to join the given group.
+	 * Request permission to join the given group.
 	 * @param { number-like } groupId - ID of the group you would like to join.
 	 * @param { module:GroupV2/Enum~bungieMembershipType } mType -
 	 * @param { string } message - The message to include in the request
@@ -578,23 +525,8 @@ class GroupV2 {
 			.then( endpoint => Request.get( this.Endpoints.rootPath + endpoint, oAuth ) );
 	}
 
-	/*
-	 * UNTESTED : Rescind your application to join the given group or leave the group if you are already a member..
-	 * @param { number-like } groupId - ID of the group
-	 * @param { module:GroupV2/Enum~bungieMembershipType } mType - MembershipType of the account to leave
-	 * @param { oAuth } oAuth - Your oAuth tokens
-	 * @returns { Promise }
-	 *
-	async rescindGroupMembership( groupId, mType, oAuth ){
-		mType = await Ml.enumLookup( mType, this.Enums.bungieMembershipType );
-
-		return Ml.renderEndpoint( this.Endpoints.rescindGroupMembership, { groupId : groupId, membershipType : mType } )
-			.then( endpoint => Reqeust.post( this.Endpoints.rootPath + endpoint, {}, oAuth ) );
-	}
-	*/
-
 	/**
-	 * UNTESTED : Approve all of the pending users for the given group.
+	 * Approve all of the pending users for the given group.
 	 * @param { number-like } groupId - ID of the group
 	 * @param { string } message - The message to include with yoru approval
 	 * @param { oAuth } oAuth - Your oAuth tokens
@@ -606,7 +538,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Deny all of the pending users for the given group.
+	 * Deny all of the pending users for the given group.
 	 * @param { number-like } groupId - ID of the group
 	 * @param { string } message - The message to include with yoru approval
 	 * @param { oAuth } oAuth - Your oAuth tokens
@@ -618,7 +550,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Approve all of the pending users for the given group.
+	 * Approve all of the pending users for the given group.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.groupId - ID of the group.
 	 *   @param { Array.<UserMembership> } Options.memberships - An array of memberships to approve
@@ -646,7 +578,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Approve the given membershipId to join the group/clan as long as they have applied.
+	 * Approve the given membershipId to join the group/clan as long as they have applied.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.groupId - ID of the group
 	 *   @param { number-like } Options.membershipId - The membership id being approved.
@@ -667,7 +599,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Deny all of the pending users for the given group.
+	 * Deny all of the pending users for the given group.
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.groupId - ID of the group.
 	 *   @param { Array.<UserMembership> } Options.memberships - An array of memberships to approve
@@ -754,7 +686,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Invite a user to join this group
+	 * Invite a user to join this group
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.groupId - ID of the group you would like to join.
 	 *   @param { number-like } Options.membershipId - Membership id of the account being invited.
@@ -775,7 +707,7 @@ class GroupV2 {
 	}
 
 	/**
-	 * UNTESTED : Cancel a users Invite to join this group
+	 * Cancel a users Invite to join this group
 	 * @param { Object } Options - The data required to complete this API request
 	 *   @param { number-like } Options.groupId - ID of the group you would like to join.
 	 *   @param { number-like } Options.membershipId - Membership id of the account being invited.
