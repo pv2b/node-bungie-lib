@@ -74,7 +74,7 @@ class Request {
 					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
 						data = JSON.parse( data );
 
-						if( typeof data.ErrorCode === 'undefined' || data.ErrorCode !== 1 )
+						if( typeof data.ErrorCode !== 'undefined' && data.ErrorCode !== 1 )
 							reject( JSON.stringify( data ) );
 						else
 							resolve( data );
@@ -149,7 +149,7 @@ class Request {
 					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
 						data = JSON.parse( data );
 
-						if( typeof data.ErrorCode === 'undefined' || data.ErrorCode !== 1 )
+						if( typeof data.ErrorCode !== 'undefined' && data.ErrorCode !== 1 )
 							reject( JSON.stringify( data ) );
 						else
 							resolve( data );
