@@ -72,7 +72,12 @@ class Request {
 				Response.on('end', () => {
 					// If the request was successful resolve the promise, otherwise reject it.
 					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
-						resolve( JSON.parse( data ) );
+						data = JSON.parse( data );
+
+						if( typeof data.ErrorCode === 'undefined' || data.ErrorCode !== 1 )
+							reject( JSON.stringify( data ) );
+						else
+							resolve( data );
 					} else {
 						reject( data );
 					}
@@ -142,7 +147,13 @@ class Request {
 
 					// If the request was successful resolve the promise, otherwise reject it.
 					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
-						resolve( JSON.parse ( data ) );
+						data = JSON.parse( data );
+
+						if( typeof data.ErrorCode === 'undefined' || data.ErrorCode !== 1 )
+							reject( JSON.stringify( data ) );
+						else
+							resolve( data );
+
 					} else {
 						reject( data );
 					}
