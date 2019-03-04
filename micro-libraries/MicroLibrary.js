@@ -9,7 +9,7 @@ const Path = require( 'path' );
 /** The root directory for the project that this library will be used in */
 const projectRoot = Path.dirname( require.main.filename || process.mainModule.filename );
 /** Contains the parsed contents of the package.json file */
-const Info = JSON.parse( Fs.readFileSync( projectRoot + '/package.json' ) );
+const Info = JSON.parse( Fs.readFileSync( projectRoot + '/../package.json' ) );
 const mlDebug = require( 'debug' )( "MicroLib" );
 const rDebug  = require( 'debug' )( "Request" );
 
@@ -197,7 +197,7 @@ function generateUserAgent( ApiCreds ){
 		var website = "N/A";
 	}
 
-	let email = ( typeof Info.author.email === 'undefined' ) ? 'N/A' : Info.author.email;
+	let email = ( typeof Info.author ==='undefined' || typeof Info.author.email === 'undefined' ) ? 'N/A' : Info.author.email;
 	return `${Info.name}/${Info.version} AppId/${ApiCreds.clientId} (+${website};${email})`;
 }
 
