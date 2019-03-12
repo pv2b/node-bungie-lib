@@ -1,6 +1,6 @@
 {
   "name": "bungie-net-api",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A zero dependency library for the Bungie.net api",
   "main": "main.js",
   "scripts": {
@@ -20,9 +20,9 @@
     "library"
   ],
   "author": {
-  "name" : "Ty Meador",
-	"email" : "ty@tylermeador.com",
-	"url" : "https://www.tylermeador.com"
+    "name": "Ty Meador",
+    "email": "ty@tylermeador.com",
+    "url": "https://www.tylermeador.com"
   },
   "license": "MIT"
 }
