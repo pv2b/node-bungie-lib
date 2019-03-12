@@ -5,7 +5,6 @@ const Path = require( 'path' );
 const QueryString = require( 'querystring' );
 const Ml = require( __dirname + "/micro-libraries/MicroLibrary.js" );
 var Request = null;
-const debug = require( 'debug' )( 'BungieLib' );
 
 class BungieLib{
 	/**
@@ -31,8 +30,6 @@ class BungieLib{
 	constructor( ApiCreds, loadMicroLibs = ['all'] ){
 
 		Request = new Ml.Request( ApiCreds );
-
-		debug( "                                                                                                  " + Ml.generateUserAgent( ApiCreds ) );
 
 		// Sanity check
 		if( typeof ApiCreds.key !== 'string')
@@ -145,7 +142,6 @@ class BungieLib{
 	 * });
 	 */
 	requestAccessToken( authCode = "NO_CODE_PROVIDED" ){
-		debug( 'Requesting access token with authCode : ' + authCode );
 		return Request.post(
 			this.Endpoints.rootPath + this.Endpoints.token,
 			QueryString.stringify( {
@@ -192,8 +188,6 @@ class BungieLib{
 	getApplicationApiUsage( Opts, oAuth ){
 		var applicationId = ( isNaN( parseInt( Opts.applicationId ) ) ) ? this.ApiCreds.clientId : Opts.applicationId;
 		var queryStrings  = {};
-
-		debug( "\t" + applicationId );
 
 		if( typeof Opts.End !== 'undefined' )
 			queryStrings.End = Opts.End;
