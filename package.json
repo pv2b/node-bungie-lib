@@ -1,0 +1,28 @@
+{
+  "name": "bungie-net-api",
+  "version": "1.0.3",
+  "description": "A zero dependency library for the Bungie.net api",
+  "main": "main.js",
+  "scripts": {
+    "test": "node test start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Native-Coder/node-bungie-lib"
+  },
+  "keywords": [
+    "bungie",
+    "bungie.net",
+    "destiny",
+    "destiny2",
+    "api",
+    "node.js",
+    "library"
+  ],
+  "author": {
+  	"name" : "Ty Meador",
+	"email" : "ty@tylermeador.com",
+	"url" : "https://www.tylermeador.com"
+  },
+  "license": "MIT"
+}
