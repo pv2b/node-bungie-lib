@@ -7,7 +7,7 @@ This library aims to be the fastest, lightest-weight JavaScript implementation o
 ## Setup
 1. First create a project at `https://www.bungie.net/en/Application`
 2. Make sure that your OAuth client type is "Confidential" if you need to make oAuth calls
-3. Install this library `npm install bungie-lib`
+3. Install this library `npm install bungie-net-api`
 4. Finally, create an API object as show below
 ```javascript
   const ApiCredentials = {
@@ -16,7 +16,7 @@ This library aims to be the fastest, lightest-weight JavaScript implementation o
     clientSecret: "your_client_secret"
   }
 
-  const BungieLib = require( 'bungie-lib' );
+  const BungieLib = require( 'bungie-net-api' );
 
   // This will load ALL micro-libraries
   const Api = new BungieLib( ApiCredentials );
