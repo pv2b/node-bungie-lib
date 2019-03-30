@@ -24,5 +24,8 @@
     "email": "ty@tylermeador.com",
     "url": "https://www.tylermeador.com"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^4.1.1"
+  }
 }
