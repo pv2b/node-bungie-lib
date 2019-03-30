@@ -6,10 +6,11 @@ const EventEmitter = require( 'events' );
 const QueryString = require( 'querystring' );
 const Https = require( 'https' );
 const Path = require( 'path' );
+const finder = require( './find-package-json' );
 /** The root directory for the project that this library will be used in */
 const projectRoot = Path.dirname( require.main.filename || process.mainModule.filename );
 /** Contains the parsed contents of the package.json file */
-const Info = JSON.parse( Fs.readFileSync( projectRoot + '/../package.json' ) );
+const Info = finder( projectRoot ).next().value;
 const mlDebug = require( 'debug' )( "MicroLib" );
 const rDebug  = require( 'debug' )( "Request" );
 
