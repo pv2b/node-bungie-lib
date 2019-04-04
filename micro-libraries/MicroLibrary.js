@@ -9,7 +9,7 @@ const Path = require( 'path' );
 /** The root directory for the project that this library will be used in */
 const projectRoot = Path.dirname( require.main.filename || process.mainModule.filename );
 /** Contains the parsed contents of the package.json file */
-const Info = JSON.parse( Fs.readFileSync( projectRoot + '/../package.json' ) );
+const Info = {};//JSON.parse( Fs.readFileSync( projectRoot + '/../package.json' ) );
 
 
 class Request {
