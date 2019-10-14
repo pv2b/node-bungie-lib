@@ -15,6 +15,8 @@ const bungieMembershipType = {
 	"TIGERXBOX" : 1,
 	/** Obviously a giant killer fline play station network */
 	"TIGERPSN" : 2,
+	/** Obviously a giant killer steam train full of tigers */
+	"TIGERSTEAM": 3,
 	/** Obviously a dumb name */
 	"TIGERBLIZZARD": 4,
 	/** No documentation */
