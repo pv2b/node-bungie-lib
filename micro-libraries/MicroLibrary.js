@@ -9,9 +9,7 @@ const Path = require( 'path' );
 /** The root directory for the project that this library will be used in */
 const projectRoot = Path.dirname( require.main.filename || process.mainModule.filename );
 /** Contains the parsed contents of the package.json file */
-const Info = JSON.parse( Fs.readFileSync( projectRoot + '/../package.json' ) );
-const mlDebug = require( 'debug' )( "MicroLib" );
-const rDebug  = require( 'debug' )( "Request" );
+const Info = {};//JSON.parse( Fs.readFileSync( projectRoot + '/../package.json' ) );
 
 
 class Request {
@@ -22,7 +20,6 @@ class Request {
 	 */
 	constructor( ApiCreds ){
 		this.ApiCreds = ApiCreds;
-		rDebug( "Request object created with credentials " + ApiCreds );
 	}
 	/**
 	 * Makes an HTTP GET request to the specified uri
@@ -31,9 +28,6 @@ class Request {
 	 * @returns { Promise }
 	 */
 	get( uri, oAuth = false ){
-		rDebug( "Request.get called" );
-		rDebug( "\turi : " + uri );
-		rDebug( "\toAuth : " + JSON.stringify( oAuth ) );
 		return new Promise( ( resolve, reject ) => {
 
 			let	headers = {
@@ -45,22 +39,13 @@ class Request {
 			headers["Authorization"] = ( typeof oAuth == 'object' ) ?
 				"Bearer " + oAuth.access_token : // Use the oAuth token to
 				"Basic " + new Buffer.from( this.ApiCreds.clientId + ":" + this.ApiCreds.clientSecret ).toString( 'base64' );
-
-			rDebug( "-=-=-=-=- Headers Generated =-=-=-=-=");
-			rDebug( headers );
-			rDebug("-=-=-=-=-=-=- End Headers =-=-=-=-=-=-=");
-
-			rDebug( "======> Request sent" );
 			Https.get( uri, { headers }, Response => {
-				rDebug( "\tReceiving response" );
 				let data = '';
 
 				// How long of a result should we expect?
 				let len = parseInt( Response.headers['content-length'], 10 ) ;
 				let size = this._convertBytes( len );
 				let progress = 0;
-
-				rDebug( "Response is expected to be " + size );
 
 				// A chunk of data has been received.
 				Response.on('data', (chunk) => {
@@ -94,10 +79,6 @@ class Request {
 	 * @returns { Promise }
 	 */
 	async post( uri, PostData, oAuth = false ){
-		rDebug( "Request.post called to " + uri );
-		rDebug( "======> uri : " + uri );
-		rDebug( "======> PostData : " + JSON.stringify( PostData ) )
-		rDebug( "======> oAuth : " + JSON.stringify( oAuth ) );
 
 		return new Promise( ( resolve, reject ) => {
 
@@ -123,9 +104,6 @@ class Request {
 			headers["Authorization"] = ( typeof oAuth == 'object' ) ?
 				"Bearer " + oAuth.access_token : // Use the oAuth token to
 				"Basic " + new Buffer.from( this.ApiCreds.clientId + ":" + this.ApiCreds.clientSecret ).toString( 'base64' );
-
-			rDebug( "headers are: " + JSON.stringify( headers ) );
-			rDebug( "======> Request sent" );
 			let request = Https.request( {
 			// Request options
 				host : host,
@@ -140,10 +118,6 @@ class Request {
 				} );
 
 				Response.on( 'end', () => {
-					rDebug( "Entire response received" );
-					rDebug( data )
-
-					rDebug( Response.headers[ 'content-type' ].substring( 0, 16 ) );
 
 					// If the request was successful resolve the promise, otherwise reject it.
 					if( Response.headers[ 'content-type' ].substring( 0, 16 ) === 'application/json' ){
@@ -331,26 +305,20 @@ class EnumError extends Error{
  * @returns { Promise } - Resolves with the enumerated value, rejects with an {@link module:EnumError~EnumError|EnumError}
  */
 async function enumLookup( key, Table ){
-	mlDebug( "enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
 	return new Promise( ( resolve, reject ) => {
 		// convert string keys to uppercase
 		key = ( typeof key === "string" ) ? key.toUpperCase() : key;
 		let typeOf = typeof Table[ key ];
 
 		if(  ( typeOf !== 'number' && typeOf !== 'string' ) ){
-			mlDebug( "\tREJECTED: enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
 			reject( new EnumError( {
 				key   : key,
 				Table : Table
 			} ) );
 		} else {
 			if( typeOf == 'string' ){
-				mlDebug("\tRESOLVED: enumLookup( " + key + ", " + JSON.stringify( Table ) + " )" );
-				mlDebug( "\t=====> " + Table[key] );
 				resolve ( Table[key] );
 			} else {
-				mlDebug( "\tRESOLVED: enumLookup( " + key + " )" );
-				mlDebug( "\t=====> " + key );
 				resolve ( key );
 			}
 		}
@@ -404,9 +372,6 @@ async function enumLookup( key, Table ){
  * "https://www.Bungie.net/som/path/HELLO/WORLD/bar?key=value&second=2"
  */
 async function renderEndpoint( uri, PathParams = {}, QueryStrings = null ){
-	mlDebug( "rendering endpoint " + uri )
-	mlDebug( "\tPathParams : " + JSON.stringify( PathParams ) );
-	mlDebug( "\tQueryStrings : " + JSON.stringify( QueryStrings ) );
 	return new Promise( ( resolve, reject) => {
 		if( typeof PathParams !== 'object' )
 			reject( "You did not provide an Object containing your key/value pairs");
@@ -430,7 +395,6 @@ async function renderEndpoint( uri, PathParams = {}, QueryStrings = null ){
 		if( missingParams !== null ){
 			// Pull values out of the braces
 			missingParams = missingParams.map( x => { return x.match( /[\w\.]+/ )[ 0 ] } );
-			mlDebug( "\tREJECTED: Parameters were missing " + missingParams );
 			reject( {
 				message: "Parameters were missing from the request",
 				missingParams: missingParams
@@ -441,7 +405,6 @@ async function renderEndpoint( uri, PathParams = {}, QueryStrings = null ){
 		if( typeof QueryStrings == 'object' )
 			rendered += "?" + QueryString.stringify( QueryStrings );
 
-		mlDebug( "the uri " + uri + " was successfully rendered to " + rendered );
 		resolve( encodeURI( rendered ) );
 	});
 };
@@ -490,12 +453,10 @@ function uuid(){
  * @returns { enum }
  */
 function mapEnumSync( Obj ){
-	mlDebug( "mapEnumSync( " + JSON.stringify( Obj ) + " )" );
 	let rtrn = Obj;
 	Object.keys( Obj ).forEach( key => {
 		rtrn[ Obj[ key ] ] = key;
 	});
-	mlDebug( "\tmapped to " + JSON.stringify( rtrn ) );
 	return rtrn;
 }
 
